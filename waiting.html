@@ -52,23 +52,18 @@
         <p class="mt-6 text-[10px] text-slate-600 italic font-bold uppercase tracking-widest">Al-Sarhan Network 2026</p>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
-    <!-- الملف المركزي (config.js) -->
     <script src="config.js"></script>
 
     <script>
-        // سحب رقم الهاتف من الرابط
         const urlParams = new URLSearchParams(window.location.search);
         const currentPhone = urlParams.get('phone');
         
         if (currentPhone) {
-            // حفظ الرقم في المتصفح
             localStorage.setItem('temp_phone', currentPhone);
 
-            // مراقبة التفعيل لحظياً باستخدام database من config.js
             database.ref('active_users/' + currentPhone).on('value', (snapshot) => {
                 const data = snapshot.val();
                 
