@@ -115,40 +115,40 @@
             document.getElementById('fileName').innerText = file ? file.name : "لم يتم اختيار ملف";
         }
 
-        // ========== دالة جلب الماك من الراوتر بـ 3 طرق ==========
+        // ========== دالة جلب الماك من الراوتر (الأولوية القصوى للرابط) ==========
         async function getMacFromRouter() {
-            let userMac = "00:00:00:00:00:00";
+            // 1. الأولوية القصوى: الماك اللي جاي في شريط العنوان (URL)
+            const urlParams = new URLSearchParams(window.location.search);
+            let macFromUrl = urlParams.get('mac') || urlParams.get('clientmac');
             
-            // المحاولة الأولى: من API الراوتر (لو موجود)
+            if (macFromUrl && macFromUrl.length > 10) {
+                console.log("✅ تم صيد الماك من العنوان:", macFromUrl);
+                return macFromUrl.trim().toUpperCase();
+            }
+
+            // 2. المحاولة الثانية: من الراوتر مباشرة (لو مسموح)
             try {
-                const response = await fetch('http://192.168.1.1/cgi-bin/get_mac', { mode: 'no-cors' });
+                const response = await fetch('http://192.168.1.1/cgi-bin/get_mac');
                 if (response.ok) {
-                    userMac = await response.text();
-                    console.log("تم سحب الماك من API الراوتر:", userMac);
-                    return userMac.trim().toUpperCase();
+                    let resMac = await response.text();
+                    if (resMac.length > 10) {
+                        console.log("✅ تم صيد الماك من API الراوتر:", resMac);
+                        return resMac.trim().toUpperCase();
+                    }
                 }
-            } catch (error) {
-                console.log("تعذر سحب الماك من API الراوتر");
+            } catch (e) { 
+                console.log("❌ CGI fetch failed:", e); 
             }
-            
-            // المحاولة الثانية: من رابط الصفحة
-            const macFromUrl = urlParams.get('mac') || urlParams.get('clientmac');
-            if (macFromUrl && macFromUrl !== "00:00:00:00:00:00") {
-                userMac = macFromUrl;
-                console.log("تم سحب الماك من رابط الصفحة:", userMac);
-                return userMac.trim().toUpperCase();
-            }
-            
-            // المحاولة الثالثة: من localStorage لو مسجل قبل كده
+
+            // 3. لو كله فشل، نرجع القيمة اللي في المتصفح أو Unknown
             const savedMac = localStorage.getItem('client_mac');
             if (savedMac) {
-                userMac = savedMac;
-                console.log("تم سحب الماك من localStorage:", userMac);
-                return userMac.trim().toUpperCase();
+                console.log("✅ تم صيد الماك من localStorage:", savedMac);
+                return savedMac.trim().toUpperCase();
             }
             
-            console.log("ماك افتراضي:", userMac);
-            return userMac;
+            console.log("⚠️ لم يتم العثور على ماك، نرجع القيمة الافتراضية");
+            return "00:00:00:00:00:00";
         }
 
         // ========== دالة إرسال الطلب بعد جلب الماك ==========
