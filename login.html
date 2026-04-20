@@ -175,11 +175,9 @@
         <p class="text-[9px] text-slate-700 mt-5 italic">Secure Gateway v3.0 | Sarhan NET</p>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
-    <!-- الملف المركزي (config.js) -->
     <script src="config.js"></script>
 
     <script>
@@ -220,7 +218,6 @@
 
             setLoading(true);
 
-            // 1. فحص الأدمن (احمد أو محمود)
             const admins = {
                 "احمد": "300392",
                 "محمود": "304932"
@@ -238,7 +235,6 @@
                 return;
             }
 
-            // 2. فحص العملاء
             try {
                 const snapshot = await database.ref('active_users').once('value');
                 let foundUser = null;
@@ -290,7 +286,6 @@
             }
         }
 
-        // تذكرني
         window.onload = function() {
             const saved = localStorage.getItem('user_login_data');
             if (saved) {
