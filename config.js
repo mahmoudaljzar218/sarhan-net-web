@@ -52,10 +52,7 @@ function sendTelegramPhoto(photoFile, caption) {
 
 // ========== دوال إضافية للتكامل ==========
 function sendToBothAdmins(message) {
-    // إرسال للتيليجرام
     sendTelegramText(message);
-    
-    // يمكن إضافة إرسال للواتساب للأدمنين هنا
     console.log("تم إرسال الإشعار للأدمنين:", message);
 }
 
@@ -69,7 +66,6 @@ function logActivity(action, details) {
     });
 }
 
-// تصدير الدوال للاستخدام في الملفات الأخرى
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { formatPhoneNumber, sendTelegramText, sendTelegramPhoto, sendToBothAdmins, logActivity, database };
 }
