@@ -77,13 +77,8 @@
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const clientMac = urlParams.get('clientmac') || urlParams.get('mac') || "00:00:00:00:00:00";
         
-        console.log("تم سحب MAC من الراوتر: " + clientMac);
-        
-        const clientIp = urlParams.get('ip') || "0.0.0.0";
-        const userDevice = navigator.userAgent;
-        
+        // قراءة بيانات الباقة
         const planGB = urlParams.get('gb') || "100";
         const planPrice = urlParams.get('price') || "100";
         const planName = urlParams.get('name') || `${planGB} جيجا`;
@@ -94,6 +89,7 @@
         document.getElementById('priceDisplay').innerHTML = `📦 ${planName} | 💰 ${planPrice} ج.م`;
         document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ussdCode}`;
 
+        // العداد
         let timeLeft = 15 * 60;
         function startTimer() {
             const countdown = setInterval(() => {
@@ -119,41 +115,85 @@
             document.getElementById('fileName').innerText = file ? file.name : "لم يتم اختيار ملف";
         }
 
+        // ========== دالة جلب الماك من الراوتر بـ 3 طرق ==========
+        async function getMacFromRouter() {
+            let userMac = "00:00:00:00:00:00";
+            
+            // المحاولة الأولى: من API الراوتر (لو موجود)
+            try {
+                const response = await fetch('http://192.168.1.1/cgi-bin/get_mac', { mode: 'no-cors' });
+                if (response.ok) {
+                    userMac = await response.text();
+                    console.log("تم سحب الماك من API الراوتر:", userMac);
+                    return userMac.trim().toUpperCase();
+                }
+            } catch (error) {
+                console.log("تعذر سحب الماك من API الراوتر");
+            }
+            
+            // المحاولة الثانية: من رابط الصفحة
+            const macFromUrl = urlParams.get('mac') || urlParams.get('clientmac');
+            if (macFromUrl && macFromUrl !== "00:00:00:00:00:00") {
+                userMac = macFromUrl;
+                console.log("تم سحب الماك من رابط الصفحة:", userMac);
+                return userMac.trim().toUpperCase();
+            }
+            
+            // المحاولة الثالثة: من localStorage لو مسجل قبل كده
+            const savedMac = localStorage.getItem('client_mac');
+            if (savedMac) {
+                userMac = savedMac;
+                console.log("تم سحب الماك من localStorage:", userMac);
+                return userMac.trim().toUpperCase();
+            }
+            
+            console.log("ماك افتراضي:", userMac);
+            return userMac;
+        }
+
+        // ========== دالة إرسال الطلب بعد جلب الماك ==========
         async function submitOrder() {
             const file = document.getElementById('fileIn').files[0];
             if (!file) return alert("يجب رفع صورة التحويل");
 
             const btn = document.getElementById('finalBtn');
-            btn.disabled = true; 
+            btn.disabled = true;
+            btn.innerText = "جاري سحب الماك من الراوتر...";
+
+            // جلب الماك من الراوتر
+            const clientMac = await getMacFromRouter();
+            
+            // تخزين الماك في localStorage عشان المرات الجاية
+            localStorage.setItem('client_mac', clientMac);
+
             btn.innerText = "جاري إرسال طلبك...";
 
             const name = document.getElementById('custName').value;
             const rawPhone = document.getElementById('custPhone').value;
-            
             const formattedPhone = formatPhoneNumber(rawPhone);
-            
             const finalPrice = parseFloat(planPrice) || 0;
+            const clientIp = urlParams.get('ip') || "0.0.0.0";
+            const userDevice = navigator.userAgent;
 
-            const finalMac = clientMac.toUpperCase().trim();
-            
-            database.ref('orders/' + formattedPhone).set({ 
-                name: name, 
+            // إرسال الطلب مع الماك اللي اتصيد
+            database.ref('orders/' + formattedPhone).set({
+                name: name,
                 phone: formattedPhone,
                 price: finalPrice,
                 planPrice: finalPrice,
                 planGB: planGB,
                 planName: planName,
                 status: "pending",
-                mac: finalMac,
+                mac: clientMac,
                 ip: clientIp,
                 device: userDevice,
                 date: new Date().toLocaleString(),
                 speed_limit: 10,
                 speed_up: 5
             }).then(() => {
-                sendTelegramPhoto(file, `🚀 طلب جديد\n👤 العميل: ${name}\n📞 الهاتف: ${formattedPhone}\n💰 المبلغ: ${finalPrice}\n📦 الباقة: ${planGB} GB - ${planName}\n📍 IP: ${clientIp}\n💻 MAC: ${finalMac}`)
-                    .finally(() => { 
-                        window.location.href = 'waiting.html?phone=' + encodeURIComponent(formattedPhone); 
+                sendTelegramPhoto(file, `🚀 طلب جديد\n👤 العميل: ${name}\n📞 الهاتف: ${formattedPhone}\n💰 المبلغ: ${finalPrice}\n📦 الباقة: ${planGB} GB - ${planName}\n📍 IP: ${clientIp}\n💻 MAC: ${clientMac}`)
+                    .finally(() => {
+                        window.location.href = 'waiting.html?phone=' + encodeURIComponent(formattedPhone);
                     });
             }).catch(err => {
                 alert("حدث خطأ في الإرسال: " + err.message);
