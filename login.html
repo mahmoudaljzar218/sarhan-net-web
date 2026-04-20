@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>تسجيل دخول - السرحان نت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #010816, #000000);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .login-card {
+            border: 1.5px solid #1e3a8a;
+            border-radius: 2.5rem;
+            background: #020617cc;
+            backdrop-filter: blur(8px);
+            width: 100%;
+            max-width: 360px;
+            padding: 40px 30px;
+            box-shadow: 0 0 40px rgba(30, 58, 138, 0.4);
+            text-align: center;
+            transition: 0.3s;
+        }
+        .login-card:hover {
+            border-color: #22d3ee;
+            box-shadow: 0 0 50px rgba(34, 211, 238, 0.2);
+        }
+        .input-group { position: relative; margin-top: 20px; }
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1e3a8a;
+            font-size: 14px;
+            z-index: 1;
+        }
+        .input-field {
+            background: #030a1a;
+            border: 1px solid #1e3a8a;
+            border-radius: 1rem;
+            padding: 12px 40px 12px 15px;
+            width: 100%;
+            font-size: 13px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+            text-align: right;
+        }
+        .input-field:focus {
+            border-color: #22d3ee;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+        }
+        .input-field::placeholder {
+            color: #475569;
+            font-size: 12px;
+        }
+        .remember-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            padding-right: 5px;
+            cursor: pointer;
+            justify-content: flex-start;
+        }
+        .remember-container input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #22d3ee;
+        }
+        .remember-text {
+            font-size: 12px;
+            color: #94a3b8;
+            user-select: none;
+        }
+        .login-btn {
+            background: linear-gradient(135deg, #ffffff, #e2e8f0);
+            color: #010816;
+            width: 100%;
+            padding: 14px;
+            border-radius: 1rem;
+            font-weight: 900;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 15px;
+            border: none;
+        }
+        .login-btn:hover {
+            background: #22d3ee;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(34, 211, 238, 0.3);
+        }
+        .support-link {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #475569;
+            display: block;
+            text-decoration: none;
+        }
+        .support-link span {
+            color: #22d3ee;
+            font-weight: bold;
+        }
+        .error-msg {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            border-radius: 1rem;
+            padding: 10px;
+            font-size: 11px;
+            color: #ef4444;
+            margin-top: 15px;
+            display: none;
+            text-align: center;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="mb-5">
+            <h1 class="text-3xl font-black italic tracking-tight">السرحان <span class="text-cyan-500">NET</span></h1>
+            <p class="text-[10px] text-cyan-500 font-bold tracking-[3px] uppercase mt-1">بوابة العملاء</p>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" class="input-field" placeholder="اسم المستخدم أو رقم الجوال" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-key"></i>
+            <input type="password" id="password" class="input-field" placeholder="كود التفعيل" autocomplete="off">
+        </div>
+
+        <label class="remember-container">
+            <input type="checkbox" id="rememberMe">
+            <span class="remember-text">تذكرني على هذا الجهاز</span>
+        </label>
+
+        <button onclick="handleLogin()" class="login-btn" id="loginBtn">
+            <i class="fas fa-sign-in-alt ml-2"></i> دخول
+        </button>
+
+        <div id="errorMsg" class="error-msg"></div>
+
+        <a href="#" onclick="requestNewAccount()" class="support-link">ليس لديك حساب؟ <span>اشترك الآن</span></a>
+        
+        <p class="text-[9px] text-slate-700 mt-5 italic">Secure Gateway v3.0 | Sarhan NET</p>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- الملف المركزي (config.js) -->
+    <script src="config.js"></script>
+
+    <script>
+        let isLoading = false;
+        
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.innerText = msg;
+            errorDiv.style.display = 'block';
+            setTimeout(() => { 
+                errorDiv.style.display = 'none'; 
+            }, 4000);
+        }
+
+        function setLoading(loading) {
+            isLoading = loading;
+            const btn = document.getElementById('loginBtn');
+            if (loading) {
+                btn.innerHTML = '<span class="loading-spinner"></span> جاري التحقق...';
+                btn.disabled = true;
+            } else {
+                btn.innerHTML = '<i class="fas fa-sign-in-alt ml-2"></i> دخول';
+                btn.disabled = false;
+            }
+        }
+
+        async function handleLogin() {
+            if (isLoading) return;
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const isRemembered = document.getElementById('rememberMe').checked;
+
+            if (!username || !password) {
+                showError("⚠️ برجاء إدخال اسم المستخدم وكود التفعيل");
+                return;
+            }
+
+            setLoading(true);
+
+            // 1. فحص الأدمن (احمد أو محمود)
+            const admins = {
+                "احمد": "300392",
+                "محمود": "304932"
+            };
+            
+            if (admins[username] && admins[username] === password) {
+                localStorage.setItem('temp_name', username);
+                if (isRemembered) {
+                    localStorage.setItem('user_login_data', JSON.stringify({ id: username, type: 'admin' }));
+                } else {
+                    localStorage.removeItem('user_login_data');
+                }
+                setLoading(false);
+                window.location.href = "admin.html";
+                return;
+            }
+
+            // 2. فحص العملاء
+            try {
+                const snapshot = await database.ref('active_users').once('value');
+                let foundUser = null;
+                let matchByName = null;
+                let matchByCode = null;
+
+                snapshot.forEach((child) => {
+                    const user = child.val();
+                    const userName = (user.name || "").trim();
+                    const userPhone = (user.phone || "").trim();
+                    const userCode = (user.code || "").trim();
+                    const userKey = child.key.trim();
+
+                    if (userName === username || userPhone === username || userKey === username) {
+                        matchByName = { key: child.key, user: user };
+                    }
+                    if (userCode === password) {
+                        matchByCode = { key: child.key, user: user };
+                    }
+                });
+
+                if (matchByName && matchByCode && matchByName.key === matchByCode.key) {
+                    foundUser = matchByName;
+                }
+
+                if (foundUser) {
+                    localStorage.setItem('temp_phone', foundUser.key);
+                    if (isRemembered) {
+                        localStorage.setItem('user_login_data', JSON.stringify({ id: foundUser.key, type: 'user' }));
+                    } else {
+                        localStorage.removeItem('user_login_data');
+                    }
+                    setLoading(false);
+                    window.location.href = "user_dashboard.html";
+                } else {
+                    setLoading(false);
+                    if (matchByName && !matchByCode) {
+                        showError("❌ كود التفعيل غير صحيح لهذا المستخدم");
+                    } else if (!matchByName && matchByCode) {
+                        showError("❌ اسم المستخدم غير صحيح لهذا الكود");
+                    } else {
+                        showError("❌ اسم المستخدم أو كود التفعيل غير صحيح");
+                    }
+                }
+            } catch (error) {
+                setLoading(false);
+                console.error("خطأ في تسجيل الدخول:", error);
+                showError("⚠️ خطأ في الاتصال، حاول مرة أخرى");
+            }
+        }
+
+        // تذكرني
+        window.onload = function() {
+            const saved = localStorage.getItem('user_login_data');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.type === 'admin') {
+                        localStorage.setItem('temp_name', data.id);
+                        window.location.href = "admin.html";
+                    } else if (data.type === 'user') {
+                        database.ref('active_users/' + data.id).once('value').then((snap) => {
+                            if (snap.exists()) {
+                                localStorage.setItem('temp_phone', data.id);
+                                window.location.href = "user_dashboard.html";
+                            } else {
+                                localStorage.clear();
+                            }
+                        }).catch(() => {
+                            localStorage.clear();
+                        });
+                    }
+                } catch(e) {
+                    localStorage.clear();
+                }
+            }
+        };
+
+        function requestNewAccount() {
+            window.location.href = "index.html";
+        }
+
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleLogin();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الانتظار | السرحان نت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #020617; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .login-box { border: 1.5px solid #1e3a8a; border-radius: 2.5rem; background: #020617; width: 340px; padding: 40px 30px; text-align: center; box-shadow: 0 0 30px rgba(30, 58, 138, 0.4); position: relative; }
+        .status-dot { width: 12px; height: 12px; background: #ef4444; border-radius: 50%; display: inline-block; margin-left: 8px; transition: 0.5s; }
+        .active-dot { background: #22c55e; box-shadow: 0 0 15px #22c55e; animation: pulse-green 2s infinite; }
+        
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <div class="mb-6">
+            <i class="fas fa-satellite-dish text-5xl text-cyan-400 mb-4 animate-pulse"></i>
+            <h1 class="text-2xl font-black text-white italic uppercase">السرحان <span class="text-cyan-400">NET</span></h1>
+            <p id="welcomeMsg" class="text-[10px] text-slate-400 mt-2 italic font-bold">جاري فحص طلبك وتأكيد السحب..</p>
+        </div>
+
+        <div class="bg-black/40 p-6 rounded-3xl border border-white/5 mb-6">
+            <p class="text-slate-400 text-[11px] mb-3 font-bold" id="statusText">بانتظار تفعيل الأدمن .. ⏳</p>
+            <div class="flex items-center justify-center gap-3">
+                <span id="statusDot" class="status-dot"></span>
+                <span class="text-2xl font-black font-mono tracking-widest text-white/20" id="userCode">------</span>
+                <i onclick="copyCode()" id="copyBtn" class="fas fa-copy text-slate-700 cursor-pointer hover:text-cyan-400 transition"></i>
+            </div>
+        </div>
+
+        <div id="adminMsgBox" class="hidden mb-6 bg-cyan-500/5 border border-cyan-500/10 p-3 rounded-2xl">
+            <p class="text-[9px] text-cyan-500 font-black mb-1 uppercase tracking-widest">إشعار من الإدارة 🔔</p>
+            <p id="adminMsgText" class="text-[11px] text-slate-300 italic"></p>
+        </div>
+
+        <button id="loginBtn" onclick="activateAndConnect()" disabled 
+                class="w-full py-5 rounded-2xl font-black text-white text-lg transition duration-500 opacity-20 cursor-not-allowed bg-slate-800 italic">
+            بانتظار تفعيلك.. 🚀
+        </button>
+
+        <p class="mt-6 text-[10px] text-slate-600 italic font-bold uppercase tracking-widest">Al-Sarhan Network 2026</p>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- الملف المركزي (config.js) -->
+    <script src="config.js"></script>
+
+    <script>
+        // سحب رقم الهاتف من الرابط
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPhone = urlParams.get('phone');
+        
+        if (currentPhone) {
+            // حفظ الرقم في المتصفح
+            localStorage.setItem('temp_phone', currentPhone);
+
+            // مراقبة التفعيل لحظياً باستخدام database من config.js
+            database.ref('active_users/' + currentPhone).on('value', (snapshot) => {
+                const data = snapshot.val();
+                
+                if (data && data.status === 'active') {
+                    document.getElementById('welcomeMsg').innerText = `أهلاً بك يا ${data.name || 'عميلنا العزيز'}`;
+                    document.getElementById('userCode').innerText = data.code || "SUCCESS";
+                    document.getElementById('userCode').classList.remove('text-white/20');
+                    document.getElementById('userCode').classList.add('text-cyan-400');
+                    document.getElementById('statusDot').classList.add('active-dot');
+                    document.getElementById('statusText').innerText = "✅ مبروك! تم تفعيل اشتراكك بنجاح";
+                    document.getElementById('statusText').classList.add('text-green-400');
+                    
+                    if(data.msg) {
+                        document.getElementById('adminMsgBox').classList.remove('hidden');
+                        document.getElementById('adminMsgText').innerText = data.msg;
+                    }
+
+                    const btn = document.getElementById('loginBtn');
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-20', 'cursor-not-allowed', 'bg-slate-800');
+                    btn.classList.add('bg-gradient-to-r', 'from-cyan-600', 'to-blue-600', 'shadow-xl', 'shadow-cyan-500/20');
+                    btn.innerText = "دخول الشبكة الآن 🚀";
+                }
+            });
+        } else {
+            document.getElementById('statusText').innerText = "خطأ في البيانات.. يرجى إعادة المحاولة";
+        }
+
+        function activateAndConnect() {
+            const btn = document.getElementById('loginBtn');
+            btn.innerText = "جاري فتح بورت الجهاز..";
+            
+            const routerAuthUrl = "http://192.168.1.1:2050/nodogsplash_auth/";
+            const img = new Image();
+            img.src = routerAuthUrl;
+
+            setTimeout(() => {
+                window.location.href = 'user_dashboard.html';
+            }, 1200);
+        }
+
+        function copyCode() {
+            const code = document.getElementById('userCode').innerText;
+            if (code === "------") return; 
+            navigator.clipboard.writeText(code).then(() => {
+                alert("تم نسخ كود الدخول الخاص بك");
+            });
+        }
+    </script>
+</body>
+</html>

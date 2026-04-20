@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>السرحان للدفع الإلكتروني</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #020617; color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 15px; }
+        .main-border { border: 1.5px solid #1e3a8a; border-radius: 2rem; background: #020617; width: 340px; padding: 25px; position: relative; box-shadow: 0 0 20px rgba(30, 58, 138, 0.5); }
+        .qr-container { background: white; border-radius: 1.5rem; padding: 15px; margin: 20px auto; width: 140px; height: 140px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .qr-container img { width: 100%; height: 100%; }
+        .timer-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; font-size: 10px; padding: 2px 12px; border-radius: 20px; font-weight: bold; white-space: nowrap; box-shadow: 0 2px 10px rgba(239, 68, 68, 0.4); z-index: 10; }
+        .btn-action { background: #0f172a; border: 1px solid #1e3a8a; border-radius: 0.8rem; padding: 10px; font-size: 11px; color: white; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-action:hover { background: #1e3a8a; border-color: #22d3ee; }
+        .input-field { background: #030a1a; border: 1px solid #1e3a8a; border-radius: 0.8rem; padding: 12px; width: 100%; font-size: 12px; color: white; outline: none; text-align: center; margin-bottom: 10px; }
+        .input-field:focus { border-color: #22d3ee; box-shadow: 0 0 10px rgba(34, 211, 238, 0.2); }
+        .phone-container { display: flex; align-items: center; margin-bottom: 15px; }
+        .code-tag { background: #1e3a8a; border-radius: 0.8rem 0 0 0.8rem; padding: 12px; font-size: 12px; font-weight: bold; min-width: 50px; text-align: center; }
+        .confirm-btn { background: white; color: black; width: 100%; padding: 14px; border-radius: 1rem; font-weight: 900; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .confirm-btn:hover { background: #22d3ee; transform: translateY(-2px); }
+        .confirm-btn:active { transform: scale(0.98); }
+        #modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-content { background: #0f172a; border: 2px solid #1e3a8a; border-radius: 2rem; width: 300px; padding: 30px; text-align: center; }
+        .border-dashed { border-style: dashed; }
+    </style>
+</head>
+<body>
+
+    <div class="main-border">
+        <h2 class="text-center text-[18px] font-black text-white italic">السرحان <span class="text-blue-500 font-black">STORE</span></h2>
+        
+        <div class="flex justify-center mt-3">
+            <div id="priceDisplay" class="bg-blue-900/30 border border-blue-500/50 text-blue-300 text-[11px] px-4 py-1 rounded-full font-bold italic tracking-tighter">جاري التحميل..</div>
+        </div>
+
+        <div class="qr-container">
+            <div class="timer-badge">ينتهي خلال <span id="timer">15:00</span></div>
+            <img id="qrImg" src="" alt="QR">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mb-4">
+            <button class="btn-action" onclick="copyCode()">📋 نسخ الكود</button>
+            <button class="btn-action" onclick="shareCode()">🔗 مشاركة</button>
+        </div>
+        
+        <input type="text" id="custName" class="input-field" placeholder="اسم العميل بالكامل">
+        <div class="phone-container">
+            <div class="code-tag">+2</div>
+            <input type="tel" id="custPhone" class="input-field" style="border-radius: 0 0.8rem 0.8rem 0; margin-bottom: 0;" placeholder="رقم الموبايل (مثال: 01012345678)">
+        </div>
+        
+        <button onclick="openModal()" class="confirm-btn mt-4 shadow-xl active:scale-95 transition-all italic">التالي (رفع السكرين) 🚀</button>
+    </div>
+
+    <div id="modalOverlay">
+        <div class="modal-content">
+            <h3 class="text-cyan-400 font-black text-[16px]">خطوة أخيرة</h3>
+            <p class="text-slate-400 text-[10px] mb-4">ارفع صورة التحويل للتأكيد</p>
+            
+            <div class="border-2 border-dashed border-blue-900 rounded-xl p-6 mb-4 bg-black/20">
+                <button class="bg-blue-600 text-white text-[11px] px-4 py-2 rounded-lg font-bold" onclick="document.getElementById('fileIn').click()">إضافة صورة</button>
+                <p id="fileName" class="text-[9px] text-slate-500 mt-3 truncate">لم يتم اختيار ملف</p>
+                <input type="file" id="fileIn" class="hidden" accept="image/*" onchange="updateFileName()">
+            </div>
+
+            <button id="finalBtn" onclick="submitOrder()" class="confirm-btn !bg-cyan-500 !text-black italic">إرسال الطلب الآن ✅</button>
+            <button onclick="closeModal()" class="text-red-500 text-[11px] mt-4 block w-full font-bold">إلغاء والعودة</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- الملف المركزي (config.js) -->
+    <script src="config.js"></script>
+
+    <script>
+        // ========== سحب الماك أوتوماتيك من الراوتر ==========
+        const urlParams = new URLSearchParams(window.location.search);
+        // سحب الماك من URL الراوتر (NoDogSplash)
+        const clientMac = urlParams.get('clientmac') || urlParams.get('mac') || "00:00:00:00:00:00";
+        
+        // طباعة في console للتأكد (للمطور)
+        console.log("تم سحب MAC من الراوتر: " + clientMac);
+        
+        // ========== باقي البيانات من الرابط ==========
+        const clientIp = urlParams.get('ip') || "0.0.0.0";
+        const userDevice = navigator.userAgent;
+        
+        // قراءة بيانات الباقة
+        const planGB = urlParams.get('gb') || "100";
+        const planPrice = urlParams.get('price') || "100";
+        const planName = urlParams.get('name') || `${planGB} جيجا`;
+        
+        const wallet = "01068222773";
+        const ussdCode = `*9*7*${wallet}*${planPrice}#`;
+
+        document.getElementById('priceDisplay').innerHTML = `📦 ${planName} | 💰 ${planPrice} ج.م`;
+        document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ussdCode}`;
+
+        // --- العداد ---
+        let timeLeft = 15 * 60;
+        function startTimer() {
+            const countdown = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById('timer').innerText = `${minutes}:${seconds < 10 ? '0'+seconds : seconds}`;
+                if (timeLeft <= 0) clearInterval(countdown);
+                timeLeft--;
+            }, 1000);
+        }
+        startTimer();
+
+        // --- وظائف عامة ---
+        function copyCode() { navigator.clipboard.writeText(ussdCode); alert("تم نسخ الكود"); }
+        function shareCode() { if (navigator.share) navigator.share({ title: 'طلب دفع', text: ussdCode }); }
+        function openModal() {
+            if (document.getElementById('custName').value.length < 3) return alert("من فضلك ادخل اسمك");
+            if (document.getElementById('custPhone').value.length < 10) return alert("رقم الهاتف غير صحيح");
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+        function updateFileName() { 
+            const file = document.getElementById('fileIn').files[0];
+            document.getElementById('fileName').innerText = file ? file.name : "لم يتم اختيار ملف";
+        }
+
+        // ========== إرسال الطلب للفايربيس ==========
+        async function submitOrder() {
+            const file = document.getElementById('fileIn').files[0];
+            if (!file) return alert("يجب رفع صورة التحويل");
+
+            const btn = document.getElementById('finalBtn');
+            btn.disabled = true; 
+            btn.innerText = "جاري إرسال طلبك...";
+
+            const name = document.getElementById('custName').value;
+            const rawPhone = document.getElementById('custPhone').value;
+            
+            // استخدام دالة توحيد الرقم من config.js
+            const formattedPhone = formatPhoneNumber(rawPhone);
+            
+            const finalPrice = parseFloat(planPrice) || 0;
+
+            // ========== حفظ الطلب برقم التليفون لسهولة الربط ==========
+            // الماك يتم حفظه بأحرف كبيرة
+            const finalMac = clientMac.toUpperCase().trim();
+            
+            database.ref('orders/' + formattedPhone).set({ 
+                name: name, 
+                phone: formattedPhone,
+                price: finalPrice,
+                planPrice: finalPrice,
+                planGB: planGB,
+                planName: planName,
+                status: "pending",
+                mac: finalMac,
+                ip: clientIp,
+                device: userDevice,
+                date: new Date().toLocaleString(),
+                speed_limit: 10,
+                speed_up: 5
+            }).then(() => {
+                // إرسال إشعار التيليجرام مع الصورة
+                sendTelegramPhoto(file, `🚀 طلب جديد\n👤 العميل: ${name}\n📞 الهاتف: ${formattedPhone}\n💰 المبلغ: ${finalPrice}\n📦 الباقة: ${planGB} GB - ${planName}\n📍 IP: ${clientIp}\n💻 MAC: ${finalMac}`)
+                    .finally(() => { 
+                        window.location.href = 'waiting.html?phone=' + encodeURIComponent(formattedPhone); 
+                    });
+            }).catch(err => {
+                alert("حدث خطأ في الإرسال: " + err.message);
+                btn.disabled = false;
+                btn.innerText = "إرسال الطلب الآن ✅";
+            });
+        }
+    </script>
+</body>
+</html>

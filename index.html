@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="cNZPfR0V9qdx5uX8wiM--PLbsG0asEHKWWAqV373Bmc" />
+    
+    <title>ال سرحان نت | لتوزيع الإنترنت</title>
+    
+    <!-- ربط ملف manifest.json للتطبيق -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- تحديد لون المتصفح -->
+    <meta name="theme-color" content="#010816">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="السرحان NET">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background-color: #041a36; 
+            scroll-behavior: smooth; 
+            overflow-x: hidden; 
+            color: white; 
+        }
+
+        .hero-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #0a305d 0%, #041a36 100%);
+        }
+        .stars {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+            opacity: 0.3;
+        }
+
+        .network-node {
+            position: absolute;
+            color: rgba(34, 211, 238, 0.2);
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+            animation: floatNode 8s ease-in-out infinite;
+        }
+        @keyframes floatNode { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .pulse-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(34, 211, 238, 0.1);
+            animation: ringOut 6s infinite;
+        }
+        @keyframes ringOut { 0% { transform: scale(0.5); opacity: 0; } 50% { opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: visible;
+        }
+
+        .glass-card:hover { 
+            transform: translateY(-15px);
+            border-color: rgba(34, 211, 238, 0.8);
+            background: rgba(34, 211, 238, 0.12);
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.4);
+        }
+
+        .shine-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 2.5rem;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .shine-layer::after {
+            content: "";
+            position: absolute;
+            top: -50%; left: -150%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg); transition: 0.6s;
+        }
+        .glass-card:hover .shine-layer::after { left: 150%; }
+
+        .top-bar { background: linear-gradient(90deg, #7c2d12 0%, #f97316 50%, #7c2d12 100%); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .text-glow { text-shadow: 0 0 15px rgba(34, 211, 238, 0.8); }
+        .num-font { font-family: sans-serif !important; }
+
+        .btn-custom {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            transition: 0.3s;
+            position: relative;
+            z-index: 10;
+        }
+        .btn-custom:hover { background: #22d3ee; color: #041a36; box-shadow: 0 0 25px #22d3ee; }
+        
+        .loading-plans {
+            text-align: center;
+            padding: 60px;
+            grid-column: 1 / -1;
+        }
+        .loading-plans i {
+            font-size: 48px;
+            color: #22d3ee;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-bg">
+        <div class="stars"></div>
+        <i class="network-node fas fa-satellite" style="top: 15%; right: 10%; font-size: 50px;"></i>
+        <div class="pulse-ring" style="top: 10%; right: 5%; width: 300px; height: 300px;"></div>
+        <i class="network-node fas fa-broadcast-tower" style="bottom: 15%; left: 10%; font-size: 60px;"></i>
+        <div id="wifi-container"></div>
+    </div>
+
+    <div class="top-bar w-full py-2 relative z-50">
+        <marquee id="topMarquee" class="text-xs font-bold text-orange-100 italic">⚡ عرض ال سرحان نت: اشترك الآن واستمتع بأسرع إنترنت في مصر ⚡</marquee>
+    </div>
+
+    <header class="p-6 flex justify-between items-center max-w-6xl mx-auto relative z-10">
+        <h1 class="text-3xl font-black italic text-glow">ال سرحان <span class="text-cyan-400">نت</span></h1>
+        <a href="login.html" class="glass-card px-8 py-3 text-xs font-black border-orange-500/40 text-white hover:bg-orange-600 transition-all cursor-pointer">
+             تسجيل الدخول <i class="fas fa-user-circle mr-1 text-orange-400"></i>
+        </a>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-12 relative z-10 text-center">
+        
+        <div class="mb-24">
+            <h2 class="text-7xl md:text-9xl font-black mb-6 text-glow italic">ال سرحان <span class="text-orange-500">نت</span></h2>
+            <p class="text-cyan-400 font-bold italic text-sm tracking-[0.4em] uppercase opacity-80">سرعة فائقة • تغطية واقعية • سيطرة كاملة</p>
+        </div>
+
+        <div id="plans-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            <div class="loading-plans">
+                <i class="fas fa-spinner"></i>
+                <p class="mt-4 text-cyan-400 text-sm">جاري تحميل الباقات...</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-28 max-w-4xl mx-auto pb-20">
+            <div class="glass-card p-10 flex flex-col items-center border-orange-500/20 hover:border-orange-500/80">
+                <i class="fas fa-wallet text-3xl text-orange-500 mb-4"></i>
+                <h4 class="text-2xl font-black italic">أحمد السرحان</h4>
+                <p class="text-orange-500 text-xs font-bold mb-6 tracking-widest italic uppercase">المالية والعمليات</p>
+                <a href="tel:01068222773" class="bg-white/5 px-10 py-3 rounded-full text-sm font-bold num-font hover:bg-orange-600 transition-all">01068222773</a>
+            </div>
+            
+            <div class="glass-card p-10 flex flex-col items-center border-cyan-500/20 hover:border-cyan-500/80">
+                <i class="fas fa-code text-3xl text-cyan-400 mb-4"></i>
+                <h4 class="text-2xl font-black italic text-white">محمود السرحان</h4>
+                <p class="text-cyan-400 text-xs font-bold mb-6 tracking-widest italic uppercase">البرمجة والنظام</p>
+                <a href="https://wa.me/201013959433" class="bg-white/5 px-10 py-3 rounded-full text-sm font-bold num-font hover:bg-cyan-500 hover:text-slate-900 transition-all">01013959433</a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- الملف المركزي (config.js) -->
+    <script src="config.js"></script>
+
+    <script>
+        // ========== تحميل وعرض الباقات ديناميكياً من Firebase ==========
+        function loadPlansFromFirebase() {
+            const container = document.getElementById('plans-container');
+            if (!container) return;
+            
+            // استخدام database من config.js
+            database.ref('plans/packages').on('value', (snap) => {
+                const plans = snap.val() || {};
+                const plansArray = [];
+                let giftPlansNames = [];
+                
+                for (const [key, plan] of Object.entries(plans)) {
+                    const hasGift = plan.hasGift === true || plan.hasGift === "true";
+                    const giftAmount = parseFloat(plan.giftAmount) || 0;
+                    const planName = plan.name || key;
+
+                    if (hasGift && giftAmount > 0) {
+                        giftPlansNames.push(`${planName} (+${giftAmount}G هدية)`);
+                    }
+                    
+                    plansArray.push({
+                        id: key,
+                        name: planName,
+                        price: plan.price || 0,
+                        gb: plan.gb || 0,
+                        isPopular: plan.isPopular === true || plan.isPopular === "true",
+                        hasGift: hasGift,
+                        giftAmount: giftAmount
+                    });
+                }
+                
+                // تحديث الشريط العلوي
+                const marquee = document.getElementById('topMarquee');
+                if (giftPlansNames.length > 0) {
+                    marquee.innerHTML = `🎁 عروض الهدايا المتاحة الآن: [ ${giftPlansNames.join(' | ')} ] ⚡ السرحان نت أسرع إنترنت في مصر ⚡`;
+                } else {
+                    marquee.innerHTML = "⚡ ال سرحان نت | اشترك الآن واستمتع بأسرع إنترنت في مصر ⚡";
+                }
+                
+                plansArray.sort((a, b) => a.price - b.price);
+                
+                if (plansArray.length === 0) {
+                    container.innerHTML = `
+                        <div class="glass-card p-12 text-center" style="grid-column: 1/-1;">
+                            <i class="fas fa-box-open text-6xl text-cyan-400 mb-4"></i>
+                            <p class="text-cyan-400 font-bold">لا توجد باقات حالياً</p>
+                            <p class="text-slate-400 text-sm mt-2">سيتم إضافة الباقات قريباً</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                plansArray.forEach((plan) => {
+                    const isPopular = plan.isPopular;
+                    const hasGift = plan.hasGift;
+                    
+                    html += `
+                        <div class="glass-card p-12 ${isPopular ? 'border-orange-500/50 bg-orange-500/5' : ''} relative overflow-visible">
+                            <div class="shine-layer"></div>
+                            <div class="absolute -top-4 left-0 right-0 flex justify-between items-center px-5 z-30">
+                                ${hasGift && plan.giftAmount > 0 ? `
+                                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2.5 py-0.5 rounded-full text-[9px] font-black shadow-lg flex items-center gap-1">
+                                        🎁 +${plan.giftAmount} جيجا
+                                    </div>` : '<div></div>'}
+                                ${isPopular ? `
+                                    <div class="bg-gradient-to-r from-orange-600 to-red-600 text-white px-3 py-0.5 rounded-full text-[9px] font-black shadow-lg flex items-center gap-1">
+                                        🔥 الأكثر طلباً
+                                    </div>` : '<div></div>'}
+                            </div>
+                            <h3 class="text-4xl font-black mb-3 italic ${isPopular ? 'text-orange-500' : 'text-white'} mt-4">${plan.name}</h3>
+                            <p class="${isPopular ? 'text-orange-400' : 'text-cyan-400'} font-black text-2xl mb-10 num-font">${plan.price} جنيه</p>
+                            <button onclick="goToPay(${plan.gb}, ${plan.price}, '${plan.name.replace(/'/g, "\\'")}')" 
+                                    class="w-full py-4 rounded-2xl font-black italic transition-all ${isPopular ? 'bg-orange-600 text-white hover:bg-orange-500' : 'btn-custom text-cyan-400'}">
+                                اطلب الآن
+                            </button>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }, (error) => {
+                console.error("خطأ في تحميل الباقات:", error);
+                container.innerHTML = `
+                    <div class="glass-card p-12 text-center" style="grid-column: 1/-1;">
+                        <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+                        <p class="text-red-400 font-bold">حدث خطأ في تحميل الباقات</p>
+                        <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-cyan-600 rounded-xl text-white font-bold">إعادة المحاولة</button>
+                    </div>
+                `;
+            });
+        }
+
+        // ========== دالة التوجه للدفع ==========
+        function goToPay(gb, price, planName) {
+            window.location.href = `pay.html?gb=${gb}&price=${price}&name=${encodeURIComponent(planName)}`;
+        }
+
+        // ========== تأثيرات وأيقونات واي فاي ==========
+        function createWifiIcons() {
+            const container = document.getElementById('wifi-container');
+            if (!container) return;
+            for (let i = 0; i < 15; i++) {
+                const icon = document.createElement('div');
+                icon.className = 'fas fa-wifi';
+                icon.style.cssText = `position:absolute; color:rgba(34,211,238,0.05); left:${Math.random()*100}vw; font-size:${Math.random()*20+10}px; animation:wifiFloat ${Math.random()*10+15}s infinite linear; animation-delay:${Math.random()*5}s; bottom:-50px; z-index:-1;`;
+                container.appendChild(icon);
+            }
+        }
+        
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `@keyframes wifiFloat{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(-110vh);opacity:0}}`;
+        document.head.appendChild(styleSheet);
+        
+        // ========== تسجيل Service Worker ==========
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                console.log('Service Worker registered successfully:', reg);
+                reg.addEventListener('updatefound', () => {
+                    console.log('تم العثور على تحديث جديد لـ Service Worker');
+                    const newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed') {
+                            console.log('تم تثبيت Service Worker الجديد');
+                        }
+                    });
+                });
+            }).catch(err => {
+                console.error('Service Worker registration failed:', err);
+            });
+        }
+        
+        // تشغيل تحميل الباقات عند تحميل الصفحة
+        window.onload = () => {
+            createWifiIcons();
+            loadPlansFromFirebase();
+        };
+    </script>
+</body>
+</html>

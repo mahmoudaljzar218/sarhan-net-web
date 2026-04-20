@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حالة الباقة | ال سرحان نت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #020617; color: white; padding: 20px; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 2rem; padding: 25px; }
+    </style>
+</head>
+<body class="max-w-md mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-xl font-black text-cyan-400">مرحباً، <span id="clientName">..</span></h1>
+        <button onclick="localStorage.clear(); location.href='login.html'" class="text-red-500 text-xs">خروج</button>
+    </div>
+
+    <div class="glass-card mb-6">
+        <p class="text-slate-400 text-xs mb-2">المتبقي من باقتك</p>
+        <h2 class="text-4xl font-black text-white">14.5 <span class="text-lg">GB</span></h2>
+        <div class="w-full bg-white/5 h-2 rounded-full mt-4"><div class="bg-cyan-500 h-full w-[70%] rounded-full"></div></div>
+        
+        <div class="mt-6 p-4 bg-black/40 rounded-2xl border border-white/5">
+            <p class="text-[10px] text-slate-500 mb-1">باسورد تتبع الباقة الحالي</p>
+            <p class="text-cyan-400 font-mono font-bold" id="trackPass">..Loading..</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+        <div class="glass-card text-center p-4"><p class="text-[10px] text-slate-500">السرعة</p><p class="text-xl font-black">32 Mbps</p></div>
+        <div class="glass-card text-center p-4"><p class="text-[10px] text-slate-500">الحالة</p><p class="text-green-400 font-bold">نشط</p></div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const user = localStorage.getItem('serhan_name');
+            const pass = localStorage.getItem('current_user_pass');
+            if (!user) { window.location.href = 'login.html'; }
+            else {
+                document.getElementById('clientName').innerText = user;
+                document.getElementById('trackPass').innerText = "PASS-" + pass;
+            }
+        };
+    </script>
+</body>
+</html>
