@@ -7,10 +7,8 @@
     
     <title>ال سرحان نت | لتوزيع الإنترنت</title>
     
-    <!-- ربط ملف manifest.json للتطبيق -->
     <link rel="manifest" href="manifest.json">
     
-    <!-- تحديد لون المتصفح -->
     <meta name="theme-color" content="#010816">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -174,20 +172,16 @@
 
     </main>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
-    <!-- الملف المركزي (config.js) -->
     <script src="config.js"></script>
 
     <script>
-        // ========== تحميل وعرض الباقات ديناميكياً من Firebase ==========
         function loadPlansFromFirebase() {
             const container = document.getElementById('plans-container');
             if (!container) return;
             
-            // استخدام database من config.js
             database.ref('plans/packages').on('value', (snap) => {
                 const plans = snap.val() || {};
                 const plansArray = [];
@@ -213,7 +207,6 @@
                     });
                 }
                 
-                // تحديث الشريط العلوي
                 const marquee = document.getElementById('topMarquee');
                 if (giftPlansNames.length > 0) {
                     marquee.innerHTML = `🎁 عروض الهدايا المتاحة الآن: [ ${giftPlansNames.join(' | ')} ] ⚡ السرحان نت أسرع إنترنت في مصر ⚡`;
@@ -275,12 +268,10 @@
             });
         }
 
-        // ========== دالة التوجه للدفع ==========
         function goToPay(gb, price, planName) {
             window.location.href = `pay.html?gb=${gb}&price=${price}&name=${encodeURIComponent(planName)}`;
         }
 
-        // ========== تأثيرات وأيقونات واي فاي ==========
         function createWifiIcons() {
             const container = document.getElementById('wifi-container');
             if (!container) return;
@@ -296,7 +287,6 @@
         styleSheet.textContent = `@keyframes wifiFloat{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(-110vh);opacity:0}}`;
         document.head.appendChild(styleSheet);
         
-        // ========== تسجيل Service Worker ==========
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').then(reg => {
                 console.log('Service Worker registered successfully:', reg);
@@ -314,7 +304,6 @@
             });
         }
         
-        // تشغيل تحميل الباقات عند تحميل الصفحة
         window.onload = () => {
             createWifiIcons();
             loadPlansFromFirebase();
