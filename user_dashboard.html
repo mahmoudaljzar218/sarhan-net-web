@@ -71,7 +71,6 @@
             </div>
         </div>
 
-        <!-- تاريخ الانتهاء وكود العميل -->
         <div class="grid grid-cols-2 gap-3 mb-4">
             <div class="card-smart p-4 text-center">
                 <p class="text-[10px] text-slate-500 mb-1 font-bold uppercase italic">تاريخ الانتهاء</p>
@@ -129,7 +128,6 @@
 
         let lastGiftTotal = 0;
 
-        // دالة لتنسيق التاريخ من Firebase
         function formatDateFromFirebase(dateValue) {
             if (!dateValue) return "غير محدد";
             if (typeof dateValue === 'string' && dateValue.includes('/')) {
@@ -147,17 +145,13 @@
             return "غير محدد";
         }
 
-        // ========== الجزء الرئيسي: قراءة البيانات من active_users ==========
-        // الموقع بيقرأ remainingGB اللي جاية من الأدمن
         database.ref('active_users/' + phone).on('value', (snap) => {
             const data = snap.val();
             if (data) {
-                // قراءة البيانات الأساسية
                 document.getElementById('fullName').innerText = data.name || 'عميل السرحان';
                 document.getElementById('userCode').innerText = data.code || 'N/A';
                 if(data.mac) document.getElementById('deviceDisplay').innerHTML = `MAC: ${data.mac}`;
 
-                // قراءة remainingGB (الرصيد المتبقي) - هذا هو المسمى اللي الأدمن بيبعته
                 const remaining = parseFloat(data.remainingGB) || 0;
                 const total = parseFloat(data.totalGB) || 0;
                 const used = parseFloat(data.usedGB) || 0;
@@ -166,15 +160,12 @@
                 document.getElementById('totalGB').innerText = total.toFixed(1) + " GB";
                 document.getElementById('usedGB').innerText = used.toFixed(1) + " GB";
                 
-                // شريط التقدم بناءً على remainingGB
                 const percent = total > 0 ? (remaining / total) * 100 : 0;
                 document.getElementById('progressInner').style.width = Math.min(100, Math.max(0, percent)) + "%";
 
-                // عرض تاريخ الانتهاء
                 const expiryDate = formatDateFromFirebase(data.endDate);
                 document.getElementById('expiryDate').innerText = expiryDate;
 
-                // نظام الهدية (اختياري)
                 const gTotal = parseFloat(data.giftTotal) || 0;
                 const gUsed = parseFloat(data.giftUsed) || 0;
                 const gRem = (gTotal - gUsed).toFixed(1);
@@ -195,7 +186,6 @@
                 }
                 lastGiftTotal = gTotal;
 
-                // رسائل الإدارة
                 if(data.msg) {
                     document.getElementById('adminMsgBox').classList.remove('hidden');
                     document.getElementById('adminMsgText').innerText = data.msg;
@@ -203,7 +193,6 @@
                     document.getElementById('adminMsgBox').classList.add('hidden');
                 }
                 
-                // حالة الحساب
                 const statusLabel = document.getElementById('statusLabel');
                 if(remaining <= 0) {
                     statusLabel.innerText = "⚠️ منتهي";
