@@ -70,27 +70,20 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
-    <!-- الملف المركزي (config.js) -->
     <script src="config.js"></script>
 
     <script>
-        // ========== سحب الماك أوتوماتيك من الراوتر ==========
         const urlParams = new URLSearchParams(window.location.search);
-        // سحب الماك من URL الراوتر (NoDogSplash)
         const clientMac = urlParams.get('clientmac') || urlParams.get('mac') || "00:00:00:00:00:00";
         
-        // طباعة في console للتأكد (للمطور)
         console.log("تم سحب MAC من الراوتر: " + clientMac);
         
-        // ========== باقي البيانات من الرابط ==========
         const clientIp = urlParams.get('ip') || "0.0.0.0";
         const userDevice = navigator.userAgent;
         
-        // قراءة بيانات الباقة
         const planGB = urlParams.get('gb') || "100";
         const planPrice = urlParams.get('price') || "100";
         const planName = urlParams.get('name') || `${planGB} جيجا`;
@@ -101,7 +94,6 @@
         document.getElementById('priceDisplay').innerHTML = `📦 ${planName} | 💰 ${planPrice} ج.م`;
         document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ussdCode}`;
 
-        // --- العداد ---
         let timeLeft = 15 * 60;
         function startTimer() {
             const countdown = setInterval(() => {
@@ -114,7 +106,6 @@
         }
         startTimer();
 
-        // --- وظائف عامة ---
         function copyCode() { navigator.clipboard.writeText(ussdCode); alert("تم نسخ الكود"); }
         function shareCode() { if (navigator.share) navigator.share({ title: 'طلب دفع', text: ussdCode }); }
         function openModal() {
@@ -128,7 +119,6 @@
             document.getElementById('fileName').innerText = file ? file.name : "لم يتم اختيار ملف";
         }
 
-        // ========== إرسال الطلب للفايربيس ==========
         async function submitOrder() {
             const file = document.getElementById('fileIn').files[0];
             if (!file) return alert("يجب رفع صورة التحويل");
@@ -140,13 +130,10 @@
             const name = document.getElementById('custName').value;
             const rawPhone = document.getElementById('custPhone').value;
             
-            // استخدام دالة توحيد الرقم من config.js
             const formattedPhone = formatPhoneNumber(rawPhone);
             
             const finalPrice = parseFloat(planPrice) || 0;
 
-            // ========== حفظ الطلب برقم التليفون لسهولة الربط ==========
-            // الماك يتم حفظه بأحرف كبيرة
             const finalMac = clientMac.toUpperCase().trim();
             
             database.ref('orders/' + formattedPhone).set({ 
@@ -164,7 +151,6 @@
                 speed_limit: 10,
                 speed_up: 5
             }).then(() => {
-                // إرسال إشعار التيليجرام مع الصورة
                 sendTelegramPhoto(file, `🚀 طلب جديد\n👤 العميل: ${name}\n📞 الهاتف: ${formattedPhone}\n💰 المبلغ: ${finalPrice}\n📦 الباقة: ${planGB} GB - ${planName}\n📍 IP: ${clientIp}\n💻 MAC: ${finalMac}`)
                     .finally(() => { 
                         window.location.href = 'waiting.html?phone=' + encodeURIComponent(formattedPhone); 
