@@ -90,7 +90,8 @@
         // استلام الـ magic من الفايروول
         const urlParams = new URLSearchParams(window.location.search);
         const magic = urlParams.get('magic');
-        const fgtIp = "192.168.1.99"; // آي بي الفايروول
+        const fgtIp = "192.168.1.170";
+        const fgtPort = "1003";
 
         function showError(msg) {
             const errorDiv = document.getElementById('errorMsg');
@@ -105,21 +106,31 @@
             btn.disabled = loading;
         }
 
-        // الوظيفة السحرية لفتح النت في الفورتي جيت
+        // استخدام الصورة الخفية (Image Beacon) لتجنب مشاكل CORS
         function openFirewallNet() {
-            if (magic) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `http://${fgtIp}:1000/fgtauth`;
-                const fields = { 'username': 'guest', 'password': '123456', 'magic': magic };
-                for (const name in fields) {
-                    const input = document.createElement('input');
-                    input.type = 'hidden'; input.name = name; input.value = fields[name];
-                    form.appendChild(input);
-                }
-                document.body.appendChild(form);
-                form.submit();
-            }
+            if (!magic) return false;
+            
+            // بناء رابط الطلب كامل
+            const url = `http://${fgtIp}:${fgtPort}/fgtauth?username=guest&password=123456&magic=${encodeURIComponent(magic)}`;
+            
+            // إنشاء صورة خفية وإرسال الطلب
+            const img = new Image();
+            img.style.display = 'none';
+            img.onload = function() {
+                console.log("تم إرسال طلب الفتح بنجاح");
+            };
+            img.onerror = function() {
+                console.log("تم إرسال الطلب (قد يظهر خطأ CORS لكنه يعمل)");
+            };
+            img.src = url;
+            
+            // إضافة الصورة للصفحة ثم إزالتها
+            document.body.appendChild(img);
+            setTimeout(() => {
+                if (img.parentNode) img.parentNode.removeChild(img);
+            }, 1000);
+            
+            return true;
         }
 
         async function handleLogin() {
@@ -134,7 +145,6 @@
 
             setLoading(true);
 
-            // 1. التحقق من Firebase
             try {
                 const snapshot = await database.ref('active_users').once('value');
                 let userValid = false;
@@ -151,13 +161,13 @@
                 if (userValid || (username === "محمود" && password === "304932")) {
                     localStorage.setItem('temp_phone', userKey || username);
                     
-                    // 2. فتح النت في الفايروول
+                    // فتح النت في الفايروول باستخدام الصورة الخفية
                     openFirewallNet();
-
-                    // 3. التحويل للداشبورد
+                    
+                    // التحويل بعد نصف ثانية
                     setTimeout(() => {
                         window.location.href = (userValid) ? "user_dashboard.html" : "admin.html";
-                    }, 2000);
+                    }, 500);
                 } else {
                     setLoading(false);
                     showError("❌ البيانات غير صحيحة");
