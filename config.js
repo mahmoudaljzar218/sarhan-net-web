@@ -18,7 +18,7 @@ const ADMIN_PHONES = {
 // ========== عنوان فورتي جيت ==========
 const FORTIGATE_IP = "192.168.137.116";
 const FORTIGATE_PORT = "443";
-const FORTIGATE_PROTOCOL = "https";  // https أو http
+const FORTIGATE_PROTOCOL = "https";
 
 const DEFAULT_FORTIGATE_URL = `${FORTIGATE_PROTOCOL}://${FORTIGATE_IP}:${FORTIGATE_PORT}/fgtauth`;
 const DEFAULT_LOGOUT_URL = `${FORTIGATE_PROTOCOL}://${FORTIGATE_IP}:${FORTIGATE_PORT}/logout`;
@@ -43,7 +43,6 @@ function saveFortiGateData(magic, postUrl) {
     if (magic) {
         sessionStorage.setItem('fgt_magic', magic);
         localStorage.setItem('saved_fgt_magic', magic);
-        console.log('✅ تم حفظ magic:', magic);
     }
     if (postUrl) {
         sessionStorage.setItem('fgt_post', postUrl);
@@ -79,32 +78,16 @@ function sendTelegramPhoto(photoFile, caption) {
     return fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
 }
 
-function sendToBothAdmins(message) {
-    sendTelegramText(message);
-}
-
-function logActivity(action, details) {
-    database.ref('logs/' + Date.now()).set({
-        action: action,
-        details: details,
-        timestamp: new Date().toLocaleString()
-    });
-}
-
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { 
         formatPhoneNumber, 
         sendTelegramText, 
         sendTelegramPhoto, 
-        sendToBothAdmins, 
-        logActivity, 
         database,
         saveFortiGateData,
         getFortiGateData,
         clearFortiGateData,
         DEFAULT_FORTIGATE_URL,
-        DEFAULT_LOGOUT_URL,
-        FORTIGATE_IP,
-        FORTIGATE_PORT
+        DEFAULT_LOGOUT_URL
     };
 }
