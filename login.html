@@ -3,199 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - السرحان نت</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+    <title>تسجيل دخول - السرحان نت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(135deg, #0b1120, #1a2332, #0f172a);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .login-box {
-            width: 100%;
-            max-width: 380px;
-            background: rgba(20, 30, 45, 0.85);
-            backdrop-filter: blur(16px);
-            border-radius: 32px;
-            padding: 35px 28px;
-            color: #fff;
-            text-align: center;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(0, 160, 255, 0.3);
-        }
-
-        .logo-icon {
-            font-size: 55px;
-            margin-bottom: 10px;
-        }
-
-        .company-name {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffcc44, #ffaa33, #ff8800);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: #bbd9ff;
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed rgba(255,255,255,0.2);
-            display: inline-block;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 60px;
-            font-size: 16px;
-            text-align: center;
-            font-family: 'Tajawal', sans-serif;
-            background: rgba(255,255,255,0.15);
-            color: white;
-            outline: none;
-            transition: 0.2s;
-        }
-
-        input:focus {
-            background: rgba(255,255,255,0.25);
-            border: 1px solid #00aaff;
-        }
-
-        input::placeholder {
-            color: rgba(255,255,255,0.6);
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            margin-top: 20px;
-            border: none;
-            border-radius: 60px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            background: linear-gradient(95deg, #0066cc, #0099ff);
-            color: white;
-            font-family: 'Tajawal', sans-serif;
-            transition: 0.2s;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
-        }
-
-        button:active {
-            transform: scale(0.97);
-        }
-
-        .error-msg {
-            color: #ff8888;
-            font-size: 13px;
-            margin-top: 12px;
-            display: none;
-        }
-
-        .info {
-            font-size: 12px;
-            color: #88aaff;
-            margin-top: 20px;
-        }
+        body { font-family: 'Cairo', sans-serif; background: radial-gradient(circle at 20% 30%, #010816, #000); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .login-card { border: 1.5px solid #1e3a8a; border-radius: 2.5rem; background: #020617cc; backdrop-filter: blur(8px); width: 100%; max-width: 360px; padding: 40px 30px; text-align: center; }
+        .input-field { background: #030a1a; border: 1px solid #1e3a8a; border-radius: 1rem; padding: 12px; width: 100%; color: white; outline: none; text-align: right; }
+        .input-field:focus { border-color: #22d3ee; }
+        .login-btn { background: linear-gradient(135deg, #fff, #e2e8f0); color: #010816; width: 100%; padding: 14px; border-radius: 1rem; font-weight: 900; cursor: pointer; }
+        .login-btn:hover { background: #22d3ee; }
     </style>
 </head>
 <body>
+    <form id="fgt_auth_form" method="POST" style="display:none;">
+        <input type="hidden" name="username" id="fgt_user">
+        <input type="hidden" name="password" value="123456">
+        <input type="hidden" name="magic" id="fgt_magic_input">
+        <input type="hidden" name="ajax" value="1">
+    </form>
 
-<div class="login-box">
-    <div class="logo-icon">🛜🔐</div>
-    <div class="company-name">السرحان نت</div>
-    <div class="subtitle">أدخل كود التسجيل الخاص بك</div>
-
-    <input type="text" id="userCode" placeholder="كود المشترك / رقم الهاتف" autocomplete="off">
-    <button onclick="loginToSarhanNet()">تسجيل الدخول</button>
-    <div class="error-msg" id="errorMsg">يرجى إدخال الكود أولاً</div>
-    <div class="info">سيتم إعادة توجيهك لبوابة الإنترنت بعد التحقق</div>
-</div>
-
-<script>
-    // دالة تسجيل الدخول - بترمي البيانات على IP الفورتي جيت
-    function loginToSarhanNet() {
-        // جلب الكود اللي كتبه المستخدم
-        const userCode = document.getElementById('userCode').value.trim();
-        const errorMsg = document.getElementById('errorMsg');
+    <div class="login-card">
+        <h1 class="text-3xl font-black italic mb-2">السرحان <span class="text-cyan-500">NET</span></h1>
+        <p class="text-[10px] text-cyan-500 mb-6">بوابة العملاء</p>
         
-        // التأكد إن المستخدم كتب حاجة
-        if (userCode === "") {
-            errorMsg.style.display = "block";
-            errorMsg.innerText = "❌ من فضلك أدخل كود المشترك";
-            return;
+        <input type="text" id="username" class="input-field mb-3" placeholder="رقم الجوال">
+        <input type="password" id="password" class="input-field mb-3" placeholder="كود التفعيل">
+        
+        <button onclick="handleLogin()" class="login-btn mt-4">دخول <i class="fas fa-sign-in-alt mr-2"></i></button>
+        
+        <a href="index.html" class="text-[11px] text-slate-500 block mt-4">ليس لديك حساب؟ اشترك الآن</a>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="config.js"></script>
+
+    <script>
+        async function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            if (!username || !password) {
+                alert("⚠️ برجاء إدخال رقم الجوال وكود التفعيل");
+                return;
+            }
+
+            const formattedPhone = formatPhoneNumber(username);
+            const { magic, postUrl } = getFortiGateData();
+            
+            if (!magic) {
+                alert("⚠️ انتهت الجلسة. يرجى العودة للصفحة الرئيسية");
+                return;
+            }
+
+            // التحقق من صحة المستخدم في Firebase
+            const userSnap = await database.ref('active_users/' + formattedPhone).once('value');
+            const user = userSnap.val();
+            
+            if (!user || user.code !== password) {
+                alert("❌ رقم الجوال أو كود التفعيل غير صحيح");
+                return;
+            }
+
+            if (user.status === 'blocked') {
+                alert("🚫 حسابك محظور. راجع الإدارة");
+                return;
+            }
+
+            // إرسال إلى فورتي جيت
+            document.getElementById('fgt_user').value = user.code;
+            document.getElementById('fgt_magic_input').value = magic;
+            document.getElementById('fgt_auth_form').action = postUrl || DEFAULT_FORTIGATE_URL;
+            
+            localStorage.setItem('temp_phone', formattedPhone);
+            document.getElementById('fgt_auth_form').submit();
         }
 
-        // جلب الـ magic من الرابط (لو موجود)
-        const urlParams = new URLSearchParams(window.location.search);
-        let magic = urlParams.get('magic');
-        
-        // لو مفيش magic في الرابط، استخدم قيمة افتراضية
-        if (!magic) {
-            magic = "0000000000000000";
-        }
-
-        // الأي بي بتاع الفورتي جيت - هنا هيتحول البيانات
-        const gatewayUrl = "http://192.168.1.99:1000/fgtauth";
-
-        // إنشاء form وإرسال البيانات بالـ POST
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = gatewayUrl;
-        form.style.display = 'none';
-
-        // الحقول اللي هتتبعت للـ gateway
-        const fields = {
-            'username': userCode,
-            'password': '123456',      // الباسورد حسب ما هو محدد عندك
-            'magic': magic
-        };
-
-        for (const key in fields) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = fields[key];
-            form.appendChild(input);
-        }
-
-        document.body.appendChild(form);
-        
-        // إظهار رسالة للمستخدم إنه جاري التوجيه
-        errorMsg.style.display = "block";
-        errorMsg.style.color = "#88ff88";
-        errorMsg.innerText = "⏳ جاري الاتصال ببوابة الإنترنت...";
-        
-        // تأخير بسيط ثم إرسال الفورم
-        setTimeout(() => {
-            form.submit();
-        }, 500);
-    }
-
-    // دعم الضغط على Enter
-    document.getElementById('userCode').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            loginToSarhanNet();
-        }
-    });
-</script>
-
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const magic = urlParams.get('magic');
+            const post = urlParams.get('post');
+            if (magic) {
+                sessionStorage.setItem('fgt_magic', magic);
+                localStorage.setItem('saved_fgt_magic', magic);
+                if (post) sessionStorage.setItem('fgt_post', post);
+            }
+        })();
+    </script>
 </body>
 </html>
