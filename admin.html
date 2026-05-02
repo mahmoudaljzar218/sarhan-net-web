@@ -8,378 +8,134 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #010816; color: white; padding: 15px; margin: 0; min-height: 100vh; }
-        .card-user { background: #020d20; border: 1px solid #1e3a8a; border-radius: 2rem; padding: 20px; margin-bottom: 15px; position: relative; transition: 0.3s; cursor: pointer; }
-        .card-user:hover { border-color: #22d3ee; }
-        .tab-active { background: #1e3a8a; border: 2px solid #22d3ee; color: #22d3ee; box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); }
+        body { font-family: 'Cairo', sans-serif; background: #010816; color: white; padding: 15px; }
+        .card-user { background: #020d20; border: 1px solid #1e3a8a; border-radius: 2rem; padding: 20px; margin-bottom: 15px; cursor: pointer; }
+        .tab-active { background: #1e3a8a; border: 2px solid #22d3ee; color: #22d3ee; }
         .tab-inactive { background: #020d20; border: 1px solid #1e3a8a; color: #64748b; }
-        .input-box { background: #0f172a; border: 1.5px solid #1e3a8a; border-radius: 1.2rem; padding: 12px; width: 100%; color: white; font-size: 14px; text-align: center; outline: none; }
-        .input-box:focus { border-color: #22d3ee; box-shadow: 0 0 10px rgba(34, 211, 238, 0.2); }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(10px); padding: 15px; }
-        .modal-content { background: #020d20; border: 2px solid #1e3a8a; border-radius: 2.5rem; width: 100%; max-width: 500px; padding: 30px; max-height: 90vh; overflow-y: auto; }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-left: 8px; }
-        .bg-active { background: #22c55e; box-shadow: 0 0 10px #22c55e; } 
-        .bg-critical { background: #ef4444; box-shadow: 0 0 10px #ef4444; animation: blink 1s infinite; } 
-        .bg-gift { background: #fbbf24; box-shadow: 0 0 10px #fbbf24; } 
-        .bg-blocked { background: #64748b; box-shadow: 0 0 10px #64748b; }
-        .user-blocked { opacity: 0.4; filter: grayscale(1); border-color: #334155 !important; }
-        .badge-count { background: #ef4444; color: white; font-size: 10px; padding: 2px 7px; border-radius: 50%; vertical-align: middle; margin-right: 5px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-        .network-node { background: #020d20; border: 2px solid #1e3a8a; border-radius: 1rem; padding: 12px; text-align: center; transition: 0.2s; }
-        .network-router { border-color: #22d3ee; box-shadow: 0 0 20px rgba(34, 211, 238, 0.2); }
-        .plan-card { background: #0f172a; border: 1px solid #1e3a8a; border-radius: 1.5rem; padding: 12px; margin-bottom: 12px; transition: 0.2s; }
-        .plan-card:hover { border-color: #22d3ee; background: #0a1222; }
-        .drawer-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 20px 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(34, 211, 238, 0.1); border-radius: 24px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .drawer-btn:active { transform: scale(0.9); background: rgba(34, 211, 238, 0.1); }
-        .drawer-btn i { font-size: 24px; transition: 0.3s; }
-        .drawer-btn span { font-size: 11px; font-weight: 800; color: #94a3b8; }
-        .drawer-btn:hover i { transform: translateY(-3px); color: #22d3ee; }
-        .drawer-btn:hover span { color: white; }
-        .mac-edit-field { background: #0f172a; border: 1px solid #22d3ee; border-radius: 0.8rem; padding: 10px; margin: 10px 0; text-align: center; }
-        .mac-edit-field label { font-size: 10px; color: #22d3ee; display: block; margin-bottom: 5px; }
-        .mac-edit-field input { background: #030a1a; border: 1px solid #1e3a8a; border-radius: 0.5rem; padding: 8px; width: 100%; color: white; font-family: monospace; text-align: center; font-size: 11px; }
-        .speed-edit { display: flex; gap: 10px; margin-top: 10px; }
-        .speed-edit div { flex: 1; }
-        .speed-edit label { font-size: 9px; color: #64748b; display: block; }
-        .speed-edit input { background: #030a1a; border: 1px solid #1e3a8a; border-radius: 0.5rem; padding: 6px; width: 100%; color: #22d3ee; text-align: center; font-size: 11px; }
+        .input-box { background: #0f172a; border: 1.5px solid #1e3a8a; border-radius: 1.2rem; padding: 12px; width: 100%; color: white; text-align: center; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(10px); }
+        .modal-content { background: #020d20; border: 2px solid #1e3a8a; border-radius: 2rem; width: 100%; max-width: 500px; padding: 30px; max-height: 90vh; overflow-y: auto; }
+        .badge-count { background: #ef4444; color: white; font-size: 10px; padding: 2px 7px; border-radius: 50%; margin-right: 5px; }
     </style>
 </head>
 <body>
 
-<div id="sideDrawer" class="fixed inset-y-0 right-0 w-80 bg-[#020d20]/95 border-l-2 border-cyan-500/20 transform translate-x-full transition-transform duration-300 z-[1000] p-6 shadow-2xl backdrop-blur-xl overflow-y-auto">
-    <div id="drawerMainContent">
-        <div class="flex justify-between items-center mb-8">
-            <button onclick="closeDrawer()" class="w-10 h-10 flex items-center justify-center bg-white/5 rounded-full text-slate-400 hover:text-white transition text-2xl">&times;</button>
-            <div class="text-right">
-                <h2 class="text-lg font-black text-white italic">لوحة التحكم</h2>
-                <p class="text-[9px] text-cyan-500 font-bold uppercase tracking-widest">Sarhan Net Admin</p>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-            <button onclick="showSubPage('devices')" class="drawer-btn"><i class="fas fa-satellite-dish text-cyan-400"></i><span>الأجهزة</span></button>
-            <button onclick="showSubPage('profits')" class="drawer-btn"><i class="fas fa-chart-line text-emerald-400"></i><span>الأرباح</span></button>
-            <button onclick="showSubPage('plans')" class="drawer-btn"><i class="fas fa-box-open text-amber-400"></i><span>الباقات</span></button>
-            <button onclick="showSubPage('broadcast')" class="drawer-btn"><i class="fas fa-bullhorn text-rose-400"></i><span>تنبيه عام</span></button>
-            <button onclick="showSubPage('settings')" class="drawer-btn col-span-2 flex-row gap-4 py-4"><i class="fas fa-server text-blue-400"></i><span>إعدادات السيرفر المركزية</span></button>
-        </div>
-        <div class="mt-8 p-4 bg-cyan-500/5 border border-cyan-500/10 rounded-3xl">
-            <div class="flex justify-between items-center"><span id="drawerActiveCount" class="text-xl font-black text-white">0</span><span class="text-[10px] text-slate-500 font-bold">المشتركين النشطين الآن</span></div>
-            <div class="w-full bg-white/5 h-1.5 rounded-full mt-2 overflow-hidden"><div class="bg-cyan-500 h-full w-2/3 shadow-[0_0_10px_#22d3ee]"></div></div>
-        </div>
-        <div class="absolute bottom-8 left-0 right-0 text-center"><p class="text-[8px] text-slate-700 uppercase font-black tracking-[4px]">V2.5 Premium Edition</p></div>
+<div class="flex justify-between items-center mb-6">
+    <div class="flex gap-3">
+        <button onclick="logoutAdmin()" class="w-12 h-12 bg-red-500/20 rounded-2xl"><i class="fas fa-power-off"></i></button>
     </div>
-    <div id="subPageDevices" class="hidden"><div class="flex items-center gap-4 mb-6"><button onclick="backToMainMenu()" class="w-8 h-8 flex items-center justify-center bg-cyan-500/10 rounded-xl text-cyan-400">&rarr;</button><h3 class="text-lg font-black text-cyan-400 italic">خريطة الشبكة</h3></div><div id="networkMapContent"></div></div>
-    <div id="subPageProfits" class="hidden"><div class="flex items-center gap-4 mb-6"><button onclick="backToMainMenu()" class="w-8 h-8 flex items-center justify-center bg-cyan-500/10 rounded-xl text-cyan-400">&rarr;</button><h3 class="text-lg font-black text-cyan-400 italic">إحصائيات الأرباح</h3></div><div class="bg-purple-900/20 p-4 rounded-2xl text-center mb-4 border border-purple-500/30"><p class="text-slate-400 text-[10px] mb-1 uppercase font-bold tracking-wider">رصيد الجيجات المتبقي (الخزنة)</p><p class="text-3xl font-black text-purple-400" id="gigastockDisplay">0.00 <span class="text-xs">GB</span></p></div><div class="bg-white/5 p-4 rounded-2xl mb-6"><p class="text-[9px] text-slate-500 font-bold mb-2 text-center uppercase">تحديث رصيد الخزنة</p><div class="flex gap-2"><input type="number" id="newStockInput" class="input-box text-sm h-10" placeholder="الكمية الجديدة"><button onclick="updateGigaStock()" class="bg-purple-600 px-4 rounded-xl text-xs font-bold active:scale-95 transition">حفظ</button></div></div><div class="bg-blue-900/20 p-4 rounded-2xl text-center mb-4"><p class="text-slate-400 text-sm">إجمالي الأرباح المالية (ثابت)</p><p class="text-3xl font-black text-green-500" id="totalProfitsDisplay">0.00 <span class="text-sm">ج.م</span></p></div><div class="bg-yellow-900/20 p-4 rounded-2xl text-center mb-4"><p class="text-slate-400 text-sm">عدد العملاء النشطين</p><p id="drawerActiveCount2" class="text-3xl font-black text-cyan-400">0</p></div><button onclick="resetStats()" class="w-full bg-red-600/30 border border-red-600 text-red-500 font-black py-3 rounded-2xl mt-2 hover:bg-red-600/50 transition active:scale-95">🔄 تصفير الإحصائيات (تحذير!)</button></div>
-    <div id="subPageBroadcast" class="hidden"><div class="flex items-center gap-4 mb-6"><button onclick="backToMainMenu()" class="w-8 h-8 flex items-center justify-center bg-cyan-500/10 rounded-xl text-cyan-400">&rarr;</button><h3 class="text-lg font-black text-cyan-400 italic">إرسال تنبيه جماعي</h3></div><textarea id="broadcastMsg" rows="4" class="input-box text-right" placeholder="اكتب رسالة التنبيه هنا..."></textarea><button onclick="sendBroadcast()" class="w-full bg-cyan-600 text-white font-black py-3 rounded-2xl mt-4 hover:bg-cyan-700 transition">إرسال للجميع 📢</button></div>
-    <div id="subPageSettings" class="hidden"><div class="flex items-center gap-4 mb-6"><button onclick="backToMainMenu()" class="w-8 h-8 flex items-center justify-center bg-cyan-500/10 rounded-xl text-cyan-400">&rarr;</button><h3 class="text-lg font-black text-cyan-400 italic">إعدادات السيرفر</h3></div><div class="space-y-4"><div class="bg-white/5 p-4 rounded-2xl"><p class="text-sm font-bold mb-2">حالة السيرفر</p><p class="text-xs text-green-500">🟢 يعمل بكفاءة</p></div><button onclick="exportData()" class="w-full bg-slate-700 text-white font-black py-3 rounded-2xl">تصدير بيانات العملاء 📁</button><button onclick="clearAllData()" class="w-full bg-red-600/30 text-red-500 font-black py-3 rounded-2xl">مسح جميع البيانات (تحذير!)</button></div></div>
-    <div id="subPagePlans" class="hidden"><div class="flex items-center justify-between gap-4 mb-6"><div class="flex items-center gap-4"><button onclick="backToMainMenu()" class="w-8 h-8 flex items-center justify-center bg-cyan-500/10 rounded-xl text-cyan-400">&rarr;</button><h3 class="text-lg font-black text-cyan-400 italic">إعدادات الباقات</h3></div><button onclick="refreshPlansList()" class="bg-cyan-600/30 border border-cyan-600 text-cyan-400 px-4 py-2 rounded-xl text-sm font-bold hover:bg-cyan-600/50 transition"><i class="fas fa-sync-alt ml-1"></i> تحديث</button></div><div id="plansListContainer" class="space-y-3 max-h-[70vh] overflow-y-auto"></div><button onclick="addNewPlan()" class="w-full mt-4 bg-green-600/30 border border-green-600 text-green-500 font-black py-3 rounded-2xl hover:bg-green-600/50 transition">+ إضافة باقة جديدة</button></div>
+    <h1 class="text-2xl font-black italic">السرحان <span class="text-cyan-500">NET</span></h1>
+    <button onclick="openDrawer()" class="w-12 h-12 bg-cyan-500/20 rounded-2xl"><i class="fas fa-bars"></i></button>
 </div>
 
-<div id="drawerOverlay" onclick="closeDrawer()" class="fixed inset-0 bg-black/60 hidden z-[999] backdrop-blur-sm"></div>
-
-<div class="flex justify-between items-center mb-6 mt-4">
-    <div class="flex gap-3"><button onclick="logoutAdmin()" class="w-12 h-12 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl flex items-center justify-center active:scale-90 transition"><i class="fas fa-power-off text-xl"></i></button><button onclick="openDrawer()" class="w-12 h-12 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-2xl flex items-center justify-center active:scale-90 transition"><i class="fas fa-bars text-xl"></i></button></div>
-    <div class="text-right flex-1 px-4"><h1 class="text-2xl font-black italic uppercase">السرحان <span class="text-cyan-500">NET</span></h1><p class="text-[9px] text-slate-500 font-black uppercase tracking-[2px]">الإدارة المركزية</p></div>
-    <button onclick="requestNotify()" class="w-12 h-12 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-2xl flex items-center justify-center active:scale-90 transition"><i class="fas fa-bell"></i></button>
+<div class="grid grid-cols-2 gap-4 mb-6 text-center">
+    <div class="bg-blue-900/20 p-4 rounded-3xl"><p class="text-xs">العملاء</p><h2 id="totalUsers" class="text-2xl font-black">0</h2></div>
+    <div class="bg-yellow-900/20 p-4 rounded-3xl"><p class="text-xs">الطلبات</p><h2 id="totalOrders" class="text-2xl font-black">0</h2></div>
 </div>
 
-<div class="grid grid-cols-2 gap-4 mb-8 text-center"><div class="bg-blue-900/10 border border-blue-900/30 p-4 rounded-3xl"><p class="text-[10px] text-slate-400 font-bold mb-1 uppercase">العملاء</p><h2 id="totalUsers" class="text-2xl font-black text-cyan-400">0</h2></div><div class="bg-yellow-900/10 border border-yellow-900/30 p-4 rounded-3xl"><p class="text-[10px] text-slate-400 font-bold mb-1 uppercase">الطلبات</p><h2 id="totalOrders" class="text-2xl font-black text-yellow-500">0</h2></div></div>
+<div class="flex gap-4 mb-6">
+    <button onclick="showTab('orders')" id="btnOrders" class="flex-1 py-3 rounded-2xl font-black tab-active">الطلبات <span id="orderBadge" class="badge-count hidden">0</span></button>
+    <button onclick="showTab('users')" id="btnUsers" class="flex-1 py-3 rounded-2xl font-black tab-inactive">العملاء</button>
+</div>
 
-<div class="flex gap-4 mb-8"><button onclick="showTab('orders')" id="btnOrders" class="flex-1 py-4 rounded-2xl font-black text-sm tab-active italic transition">الطلبات <span id="orderBadge" class="badge-count hidden">0</span></button><button onclick="showTab('users')" id="btnUsers" class="flex-1 py-4 rounded-2xl font-black text-sm tab-inactive italic transition">العملاء</button></div>
+<div id="ordersSection"><div id="ordersList"></div></div>
+<div id="usersSection" class="hidden"><div id="usersList"></div></div>
 
-<div id="ordersSection" class="space-y-4"><div id="ordersList"></div></div>
-<div id="usersSection" class="hidden space-y-4"><div id="usersList"></div></div>
-
-<!-- مودال الطلب - مع إمكانية تعديل MAC والسرعة -->
+<!-- مودال الطلب -->
 <div id="orderModal" class="modal">
-    <div class="modal-content text-right">
-        <div class="flex justify-between items-center mb-6">
-            <button onclick="closeOrderModal()" class="text-slate-500 text-4xl leading-none">&times;</button>
-            <h3 class="text-xl font-black text-cyan-400 italic">تفاصيل الطلب</h3>
+    <div class="modal-content">
+        <button onclick="closeOrderModal()" class="float-left text-2xl">&times;</button>
+        <h3 class="text-xl font-bold mb-4">تفاصيل الطلب</h3>
+        <p id="modalOrderName" class="text-center text-lg font-bold">--</p>
+        <p id="modalOrderPrice" class="text-center text-green-500 text-xl">--</p>
+        <input type="text" id="editMacAddress" class="input-box my-3" placeholder="MAC Address">
+        <div class="flex gap-3">
+            <input type="number" id="editSpeedDown" placeholder速度 تحميل" class="input-box">
+            <input type="number" id="editSpeedUp" placeholder="سرعة رفع" class="input-box">
         </div>
-        <div id="orderModalContent">
-            <p class="text-center text-white text-lg font-black mb-2" id="modalOrderName">--</p>
-            <p class="text-center text-green-500 text-2xl font-black mb-4" id="modalOrderPrice">--</p>
-            
-            <!-- حقل تعديل MAC - الأدمن يقدر يعدله -->
-            <div class="mac-edit-field">
-                <label><i class="fas fa-microchip ml-1"></i> عنوان MAC (قابل للتعديل)</label>
-                <input type="text" id="editMacAddress" class="text-center font-mono" placeholder="AA:BB:CC:DD:EE:FF" dir="ltr">
-                <p class="text-[8px] text-slate-500 mt-1">الماك اللي سحبه الراوتر تلقائياً، يمكنك تعديله يدوياً</p>
-            </div>
-            
-            <!-- حقل تعديل السرعة -->
-            <div class="speed-edit">
-                <div>
-                    <label><i class="fas fa-download"></i> سرعة التحميل (Mbps)</label>
-                    <input type="number" id="editSpeedDown" class="text-center" value="10" step="1" placeholder="10">
-                </div>
-                <div>
-                    <label><i class="fas fa-upload"></i> سرعة الرفع (Mbps)</label>
-                    <input type="number" id="editSpeedUp" class="text-center" value="5" step="1" placeholder="5">
-                </div>
-            </div>
-            
-            <div class="flex gap-3 mt-6">
-                <button onclick="approveOrder()" class="flex-1 bg-green-600 text-white font-black py-3 rounded-2xl">✅ تفعيل</button>
-                <button onclick="closeOrderModal()" class="flex-1 bg-red-600/30 text-red-500 font-black py-3 rounded-2xl">إلغاء</button>
-            </div>
-        </div>
+        <button onclick="approveOrder()" class="w-full bg-green-600 py-3 rounded-2xl font-bold mt-4">✅ تفعيل</button>
     </div>
 </div>
-
-<!-- مودال تعديل العميل -->
-<div id="editModal" class="modal"><div class="modal-content text-right"><div class="flex justify-between items-center mb-6"><button onclick="closeModal()" class="text-slate-500 text-4xl leading-none">&times;</button><h3 class="text-xl font-black text-cyan-400 italic">تعديل البيانات</h3></div><div id="vAccountStats" class="mb-6 space-y-2"><p id="vNameLabel" class="font-black text-white text-2xl text-center uppercase italic">--</p><div class="grid grid-cols-2 gap-2"><div class="bg-cyan-500/10 p-3 rounded-2xl border border-cyan-500/20 text-center"><p class="text-[9px] text-cyan-500 uppercase font-bold">رصيد الجيجات</p><p id="vTotalGBDisplay" class="text-xl font-black text-white">0 <span class="text-xs">GB</span></p></div><div class="bg-green-500/10 p-3 rounded-2xl border border-green-500/20 text-center"><p class="text-[9px] text-green-500 uppercase font-bold">قيمة الاشتراك</p><p id="vPriceDisplay" class="text-xl font-black text-white">0 <span class="text-xs">ج.م</span></p></div></div></div><div class="space-y-4"><div class="grid grid-cols-2 gap-4"><div><label class="text-[10px] text-slate-500 font-bold pr-2 italic uppercase">المستهلك (GB)</label><input type="number" id="editUsedGB" class="input-box text-red-500 font-black" step="0.1"></div><div><label class="text-[10px] text-slate-500 font-bold pr-2 italic uppercase">الباقة (GB)</label><input type="number" id="editTotalGB" class="input-box text-cyan-400 font-black" step="0.1"></div></div><div class="bg-yellow-500/5 border border-yellow-500/20 p-5 rounded-[2rem] space-y-4"><p class="text-center text-yellow-500 font-black text-xs italic uppercase">نظام الهدايا 🎁</p><div class="grid grid-cols-2 gap-3"><input type="number" id="editGiftTotal" class="input-box border-yellow-500/20 text-yellow-500" placeholder="جيجات" step="0.1"><input type="number" id="editGiftUsed" class="input-box border-yellow-500/20 text-slate-400" placeholder="مستهلك" step="0.1"></div></div><div class="bg-red-500/5 border border-red-500/20 p-5 rounded-[2rem] space-y-4"><p class="text-center text-red-500 font-black text-xs italic uppercase">التحكم السريع في الخصم 🚀</p><div class="grid grid-cols-2 gap-3"><button onclick="deductFromMain()" class="bg-red-600/40 border border-red-500 text-red-400 font-black py-3 rounded-xl text-sm active:scale-95 transition">خصم 1GB (ذكي)</button><button onclick="deductFromGift()" class="bg-yellow-600/40 border border-yellow-500 text-yellow-400 font-black py-3 rounded-xl text-sm active:scale-95 transition">خصم 1GB من الهدية</button></div><input type="number" id="customDeduct" class="input-box text-red-500" placeholder="مقدار الخصم بالجيجا" step="0.1"><button onclick="deductCustom()" class="w-full bg-red-700/50 border border-red-600 text-white font-black py-2 rounded-xl text-sm active:scale-95 transition">خصم المبلغ المخصص (ذكي)</button></div><div><label class="text-[10px] text-slate-500 font-bold pr-2 italic uppercase">سعر الاشتراك المالي (ج.م)</label><input type="number" id="editPrice" class="input-box text-green-400 font-black" step="0.01"></div><div class="grid grid-cols-2 gap-4"><div><label class="text-[10px] text-slate-500 font-bold pr-2 italic uppercase">سرعة التحميل (Mbps)</label><input type="number" id="editSpeedDownUser" class="input-box text-cyan-400 font-black" step="1" placeholder="مثال: 10"></div><div><label class="text-[10px] text-slate-500 font-bold pr-2 italic uppercase">سرعة الرفع (Mbps)</label><input type="number" id="editSpeedUpUser" class="input-box text-cyan-400 font-black" step="1" placeholder="مثال: 5"></div></div><div class="grid grid-cols-2 gap-4"><div class="col-span-2"><label class="text-[10px] text-slate-500 font-bold pr-2 italic uppercase">عنوان MAC (للتعرّف على الراوتر)</label><input type="text" id="editMacAddressUser" class="input-box text-cyan-400 font-black text-xs" placeholder="مثال: AA:BB:CC:DD:EE:FF" dir="ltr"><p class="text-[8px] text-slate-500 mt-1 text-center">يُستخدم لتطبيق حدود السرعة تلقائياً على الراوتر</p></div></div><div class="grid grid-cols-2 gap-4"><div><label class="text-[10px] text-slate-500 font-bold pr-2 italic uppercase">حالة الحساب</label><select id="editStatus" class="input-box font-black text-xs bg-slate-900" onchange="handleStatusChange()"><option value="active">🟢 نشط</option><option value="critical">🔴 منتهي</option><option value="gift">🟡 هدية</option><option value="blocked">🚫 حظر</option></select></div><div><label class="text-[10px] text-slate-500 font-bold pr-2 italic uppercase">كود العميل</label><input type="text" id="editCode" class="input-box text-slate-400" readonly></div></div><input type="text" id="editMsg" class="input-box text-[11px]" placeholder="رسالة إشعار للعميل"></div><div class="mt-8 space-y-3"><button onclick="updateUserDataOnly()" class="w-full bg-slate-800 border border-white/10 text-white font-black py-4 rounded-2xl italic active:scale-95 transition-all">تحديث البيانات ⚙️</button><button onclick="renewSubscription()" class="w-full bg-yellow-600/30 border border-yellow-600/50 text-yellow-500 font-black py-4 rounded-2xl italic active:scale-95 transition-all">تجديد الاشتراك (30 يوم) ⏳</button><button onclick="saveAndClose()" class="w-full bg-cyan-600 text-white font-black py-5 rounded-2xl italic shadow-xl active:scale-95 transition-all text-lg">حفظ وإغلاق ✅</button></div><button onclick="deleteUser()" class="w-full text-red-500/30 text-[9px] mt-6 font-black uppercase">حذف المشترك نهائياً</button></div></div>
-
-<audio id="notifSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="config.js"></script>
 
 <script>
-    let currentPhone = "", firstLoad = true, currentName = "";
-    let currentOrder = null;
-    const notifAudio = document.getElementById('notifSound');
+    let currentPhone = "", currentOrder = null, firstLoad = true;
 
-    function formatPhoneNumber(phone) { 
-        if (!phone) return ''; 
-        let cleaned = phone.toString().replace(/\D/g, ''); 
-        if (cleaned.startsWith('0')) cleaned = '20' + cleaned.substring(1);
-        else if (cleaned.startsWith('1')) cleaned = '20' + cleaned;
-        else if (!cleaned.startsWith('20')) cleaned = '20' + cleaned;
-        return cleaned; 
-    }
-    
-    function updateTotalProfits(amount) { database.ref('stats/totalProfits').transaction((current) => (current || 0) + amount); }
-    function loadTotalProfits() { database.ref('stats/totalProfits').on('value', (snap) => { const val = snap.val() || 0; const el = document.getElementById('totalProfitsDisplay'); if (el) el.innerHTML = `${val.toFixed(2)} <span class="text-sm">ج.م</span>`; }); }
-    function loadGigaStock() { database.ref('stats/gigaStock').on('value', (snap) => { const val = snap.val() || 0; const el = document.getElementById('gigastockDisplay'); if (el) el.innerHTML = `${val.toFixed(2)} <span class="text-sm">GB</span>`; }); }
-    function updateGigaStock() { const val = parseFloat(document.getElementById('newStockInput').value); if (isNaN(val)) { alert("برجاء إدخال رقم صحيح"); return; } database.ref('stats/gigaStock').set(val).then(() => { alert("✅ تم تحديث مخزن الجيجات بنجاح"); document.getElementById('newStockInput').value = ''; }); }
-    function resetStats() { if(confirm("⚠️ تحذير: هل أنت متأكد من تصفير إجمالي الأرباح؟")) { database.ref('stats/totalProfits').set(0); alert("✅ تم تصفير الإحصائيات"); } }
-
-    // دالة حساب تاريخ الانتهاء بإضافة 30 يوم
     function calculateEndDate() {
-        const endDate = new Date();
-        endDate.setDate(endDate.getDate() + 30);
-        const day = endDate.getDate().toString().padStart(2, '0');
-        const month = (endDate.getMonth() + 1).toString().padStart(2, '0');
-        const year = endDate.getFullYear();
-        return `${day}/${month}/${year}`;
+        const d = new Date(); d.setDate(d.getDate() + 30);
+        return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
     }
 
-    // ========== دالة الموافقة على الطلب (متوافقة مع سكريبت الراوتر) ==========
     function approveOrder() {
-        if (!currentOrder) { alert("❌ لا توجد بيانات للطلب الحالي"); return; }
-        
+        if (!currentOrder) return;
         const phone = currentPhone;
-        if (!phone) { alert("❌ رقم الهاتف غير موجود"); return; }
-        
-        // جلب البيانات المعدلة من حقول التعديل
-        const manualMac = document.getElementById('editMacAddress').value.trim();
-        const manualSpeedDown = parseFloat(document.getElementById('editSpeedDown').value) || 10;
-        const manualSpeedUp = parseFloat(document.getElementById('editSpeedUp').value) || 5;
-        
-        // توحيد الماك - تحويل لأحرف كبيرة
-        const finalMac = manualMac.toUpperCase().trim();
-        
-        // تحديث حالة الطلب في orders
-        database.ref('orders/' + phone).update({ status: 'approved' });
-        
-        // حساب تاريخ الانتهاء
-        const endDateString = calculateEndDate();
-        const userCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const mac = document.getElementById('editMacAddress').value.trim().toUpperCase();
+        const speedDown = parseFloat(document.getElementById('editSpeedDown').value) || 10;
+        const speedUp = parseFloat(document.getElementById('editSpeedUp').value) || 5;
+        const endDate = calculateEndDate();
+        const code = Math.floor(100000 + Math.random() * 900000);
         const totalGB = parseFloat(currentOrder.planGB) || 0;
-        
-        // ========== البيانات الموحدة للراوتر (بالمسميات اللي السكريبت sarhan_core.sh مستنيها) ==========
+
         database.ref('active_users/' + phone).set({
-            mac: finalMac,                                    // الماك حروف كبيرة
-            name: currentOrder.name,                          // اسم العميل
-            phone: phone,                                     // رقم الهاتف
-            remainingGB: totalGB,                             // المسمى اللي الراوتر بيفهمه (رصيد الجيجات المتبقي)
-            totalGB: totalGB,                                 // إجمالي الباقة
-            usedGB: 0,                                        // المستهلك
-            speed_down: manualSpeedDown.toString(),           // سرعة التحميل (Mbps)
-            speed_up: manualSpeedUp.toString(),               // سرعة الرفع (Mbps)
-            speed_limit: manualSpeedDown,                     // نفس القيمة بصيغة رقمية
-            status: "active",                                 // حالة الحساب
-            code: userCode,                                   // كود العميل
-            ip: currentOrder.ip || "0.0.0.0",                 // IP العميل
-            startDate: new Date().toLocaleDateString('ar-EG'),// تاريخ البداية
-            endDate: endDateString,                           // تاريخ الانتهاء
-            msg: `✅ تم تفعيل باقتك بنجاح!\n🔑 كود العميل: ${userCode}\n📅 تاريخ الانتهاء: ${endDateString}\n📦 الباقة: ${totalGB} GB`
+            mac, name: currentOrder.name, phone, remainingGB: totalGB, totalGB, usedGB: 0,
+            speed_down: speedDown, speed_up: speedUp, speed_limit: speedDown,
+            status: "active", code, ip: currentOrder.ip || "", endDate,
+            magic: currentOrder.magic, msg: `✅ تم التفعيل\n🔑 كود: ${code}\n📅 ينتهي: ${endDate}`
         }).then(() => {
-            // حذف الطلب من قائمة الطلبات بعد التفعيل
-            return database.ref('orders/' + phone).remove();
-        }).then(() => {
-            updateTotalProfits(currentOrder.price);
-            database.ref('stats/gigaStock').transaction((current) => (current || 0) - totalGB);
-            alert(`✅ تم التفعيل بنجاح!\n🔑 كود العميل: ${userCode}\n📦 الباقة: ${totalGB} GB\n💰 السعر: ${currentOrder.price} ج.م\n📅 ينتهي في: ${endDateString}`);
+            database.ref('orders/' + phone).remove();
+            database.ref('stats/totalProfits').transaction(c => (c||0) + (currentOrder.price || 0));
+            alert(`✅ تم التفعيل!\n🔑 كود: ${code}`);
             closeOrderModal();
-        }).catch((err) => { 
-            console.error("خطأ في التفعيل:", err); 
-            alert("⚠️ حدث خطأ أثناء التفعيل: " + err.message); 
         });
     }
 
-    function openOrderModal(phoneNumber) { 
-        currentPhone = phoneNumber;
-        database.ref('orders/' + phoneNumber).once('value').then((snap) => { 
-            const order = snap.val(); 
-            if (order) { 
-                currentOrder = order; 
-                currentOrder.phone = phoneNumber;
-                document.getElementById('modalOrderName').innerText = order.name; 
-                document.getElementById('modalOrderPrice').innerText = (order.price || 0) + " ج.م"; 
-                
-                // تعبئة حقول MAC والسرعة بالبيانات الموجودة
-                document.getElementById('editMacAddress').value = order.mac || "00:00:00:00:00:00";
-                document.getElementById('editSpeedDown').value = order.speed_limit || 10;
-                document.getElementById('editSpeedUp').value = order.speed_up || 5;
-                
-                document.getElementById('orderModal').style.display = 'flex'; 
-            } 
-        }); 
-    }
-    
-    function closeOrderModal() { document.getElementById('orderModal').style.display = 'none'; currentOrder = null; currentPhone = null; }
-
-    function updateDrawerStats() { 
-        let activeUsers = 0; 
-        database.ref('active_users').once('value', (snap) => { 
-            snap.forEach((child) => { 
-                const user = child.val(); 
-                if (user.status === 'active' || user.status === 'gift') activeUsers++; 
-            }); 
-            const d1 = document.getElementById('drawerActiveCount'); 
-            const d2 = document.getElementById('drawerActiveCount2'); 
-            if(d1) d1.innerText = activeUsers; 
-            if(d2) d2.innerText = activeUsers; 
-        }); 
-    }
-
-    database.ref('active_users').on('value', (snap) => { 
-        const list = document.getElementById('usersList'); 
-        list.innerHTML = ''; 
-        let count = 0; 
-        snap.forEach((child) => { 
-            count++; 
-            const u = child.val(); 
-            const total = u.totalGB || 0; 
-            const rem = (u.remainingGB || 0).toFixed(1); 
-            const isBlocked = u.status === 'blocked'; 
-            let stClass = isBlocked ? "bg-blocked" : (u.giftTotal > 0 ? "bg-gift" : (u.status === 'critical' || rem <= 1 ? "bg-critical" : "bg-active")); 
-            list.innerHTML += `<div class="card-user border-white/5 flex justify-between items-center ${isBlocked ? 'user-blocked' : ''}" onclick="openModal('${child.key}')"><div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-cyan-400 border border-white/5"><i class="fas ${isBlocked ? 'fa-user-slash text-red-500' : 'fa-user-cog'}"></i></div><div class="text-right"><p class="font-black italic text-white uppercase"><span class="status-dot ${stClass}"></span> ${u.name || child.key}</p><div class="flex flex-col gap-0.5 mt-1"><p class="text-[8px] font-bold text-slate-500 italic">الباقة: <span class="text-blue-400">${total}GB</span></p><p class="text-[9px] font-bold text-slate-400 italic uppercase">المتبقي: <span class="text-cyan-400">${rem}G</span></p></div></div></div>`; 
-        }); 
-        document.getElementById('totalUsers').innerText = count; 
-        updateDrawerStats(); 
-    });
-
-    database.ref('orders').on('value', (snap) => { 
-        const list = document.getElementById('ordersList'); 
-        list.innerHTML = ''; 
-        let count = 0; 
-        snap.forEach((child) => { 
-            const o = child.val(); 
-            if (o.status === "approved") return; 
-            count++; 
-            const macDisplay = o.mac ? o.mac.substring(0, 15) : 'لا يوجد';
-            list.innerHTML += `<div class="card-user flex justify-between items-center border-yellow-500/30 bg-yellow-500/5">
-                <div class="flex gap-2">
-                    <button onclick="openOrderModal('${child.key}')" class="bg-white text-black px-4 py-2 rounded-xl font-black text-[11px] italic">تفعيل</button>
-                    <button onclick="if(confirm('حذف الطلب؟')) database.ref('orders/${child.key}').remove()" class="bg-red-600/20 border border-red-600/30 text-red-500 px-4 py-2 rounded-xl font-black text-[11px] italic">حذف</button>
-                </div>
-                <div class="text-right">
-                    <p class="font-black text-white italic text-sm uppercase">${o.name}</p>
-                    <p class="text-[8px] text-cyan-400">📦 ${o.planGB || '?'} GB | 💰 ${o.price || 100} ج.م</p>
-                    <p class="text-[7px] text-slate-500 font-mono">MAC: ${macDisplay}</p>
-                </div>
-            </div>`; 
-        }); 
-        document.getElementById('totalOrders').innerText = count; 
-        const badge = document.getElementById('orderBadge');
-        if(badge) {
-            badge.innerText = count;
-            badge.classList.toggle('hidden', count === 0);
-        }
-        if(!firstLoad && count > 0) playAlert(); 
-    });
-
-    function openModal(key) { if (!key) return; currentName = key; database.ref('active_users/' + key).once('value', (snap) => { const u = snap.val(); if (!u) { alert("❌ لا توجد بيانات"); return; } document.getElementById('vNameLabel').innerHTML = `${u.name || key} <span class="text-cyan-500 text-sm block mt-1">[ باقة: ${u.totalGB || 0} GB ]</span>`; document.getElementById('vTotalGBDisplay').innerText = u.totalGB || 0; document.getElementById('vPriceDisplay').innerText = u.price || 0; document.getElementById('editTotalGB').value = u.totalGB || 0; document.getElementById('editUsedGB').value = u.usedGB || 0; document.getElementById('editGiftTotal').value = u.giftTotal || ""; document.getElementById('editGiftUsed').value = u.giftUsed || ""; document.getElementById('editPrice').value = u.price || 0; document.getElementById('editMsg').value = u.msg || ''; document.getElementById('editCode').value = u.code || '------'; document.getElementById('editStatus').value = u.status || 'active'; document.getElementById('editSpeedDownUser').value = u.speed_limit || 0; document.getElementById('editSpeedUpUser').value = u.speed_up || 0; document.getElementById('editMacAddressUser').value = u.mac || ''; document.getElementById('editModal').style.display = 'flex'; }); }
-
-    function validateInput(type) { const total = parseFloat(document.getElementById('editTotalGB').value) || 0; let used = parseFloat(document.getElementById('editUsedGB').value) || 0; if(type === 'used') { if(used > total) document.getElementById('editUsedGB').value = total; if(used < 0) document.getElementById('editUsedGB').value = 0; } }
-    function handleStatusChange() { if(document.getElementById('editStatus').value === 'blocked') document.getElementById('editMsg').value = "عفواً، تم إيقاف الخدمة مؤقتاً.. راجع الإدارة."; }
-
-    function deductSmart(amount) { let giftTotal = parseFloat(document.getElementById('editGiftTotal').value) || 0; let giftUsed = parseFloat(document.getElementById('editGiftUsed').value) || 0; let giftRemaining = giftTotal - giftUsed; let used = parseFloat(document.getElementById('editUsedGB').value) || 0; let total = parseFloat(document.getElementById('editTotalGB').value) || 0; let remainingToDeduct = amount; if (giftRemaining > 0) { let deductFromGift = Math.min(giftRemaining, remainingToDeduct); document.getElementById('editGiftUsed').value = giftUsed + deductFromGift; remainingToDeduct -= deductFromGift; } if (remainingToDeduct > 0) { let newUsed = used + remainingToDeduct; if (newUsed > total) { alert("⚠️ الخصم أكبر من الرصيد المتاح!"); return; } document.getElementById('editUsedGB').value = newUsed; } updateUserDataOnly(); }
-    function deductFromMain() { deductSmart(1); }
-    function deductFromGift() { let giftTotal = parseFloat(document.getElementById('editGiftTotal').value) || 0; let giftUsed = parseFloat(document.getElementById('editGiftUsed').value) || 0; if (giftUsed + 1 > giftTotal) { alert("⚠️ لا يوجد رصيد كافي في الهدية!"); return; } document.getElementById('editGiftUsed').value = giftUsed + 1; updateUserDataOnly(); }
-    function deductCustom() { let amount = parseFloat(document.getElementById('customDeduct').value); if (isNaN(amount) || amount <= 0) { alert("أدخل مقدار صحيح أكبر من 0"); return; } deductSmart(amount); }
-
-    function updateUserDataOnly() { validateInput('used'); const speedDown = parseFloat(document.getElementById('editSpeedDownUser').value) || 0; const speedUp = parseFloat(document.getElementById('editSpeedUpUser').value) || 0; const macAddress = document.getElementById('editMacAddressUser').value.trim(); const totalGB = parseFloat(document.getElementById('editTotalGB').value) || 0; const usedGB = parseFloat(document.getElementById('editUsedGB').value) || 0; const remainingGB = totalGB - usedGB; database.ref('active_users/' + currentName).update({ totalGB: totalGB, remainingGB: remainingGB, usedGB: usedGB, giftTotal: parseFloat(document.getElementById('editGiftTotal').value) || 0, giftUsed: parseFloat(document.getElementById('editGiftUsed').value) || 0, msg: document.getElementById('editMsg').value, status: document.getElementById('editStatus').value, price: parseFloat(document.getElementById('editPrice').value) || 0, speed_limit: speedDown, speed_up: speedUp, mac: macAddress, last_speed_update: firebase.database.ServerValue.TIMESTAMP }).then(() => alert("تم التحديث ✅")); }
-    
-    function renewSubscription() { 
-        if(confirm("هل تريد تصفير العداد وتجديد الاشتراك لمدة 30 يوم؟")) { 
-            const totalGB = parseFloat(document.getElementById('editTotalGB').value) || 0; 
-            const endDateString = calculateEndDate();
-            database.ref('active_users/' + currentName).update({ 
-                usedGB: 0, 
-                remainingGB: totalGB, 
-                giftUsed: 0, 
-                status: 'active', 
-                endDate: endDateString,
-                msg: `✅ تم تجديد اشتراكك بنجاح!\n📅 تاريخ الانتهاء الجديد: ${endDateString}` 
-            }).then(() => alert("تم التجديد ✅")); 
-        } 
-    }
-    
-    function saveAndClose() { updateUserDataOnly(); closeModal(); }
-    function closeModal() { document.getElementById('editModal').style.display = 'none'; }
-
-    function loadPlansList() { const container = document.getElementById('plansListContainer'); if (!container) return; container.innerHTML = `<div class="text-center py-10"><i class="fas fa-spinner fa-spin text-2xl text-cyan-400"></i><p class="mt-2 text-xs text-slate-500">جاري تحميل الباقات...</p></div>`; database.ref('plans/packages').once('value', (snap) => { let html = ''; if (snap.numChildren() === 0) { html = `<div class="text-center py-10 text-slate-500"><i class="fas fa-box-open text-4xl mb-3"></i><p class="text-xs">لا توجد باقات مضافة بعد</p><p class="text-[9px]">اضغط على زر إضافة باقة جديدة للبدء</p></div>`; } else { snap.forEach(child => { const key = child.key; const plan = child.val(); const hasGift = plan.hasGift === true; const isPopular = plan.isPopular === true; html += `<div class="plan-card p-4 border border-white/10 rounded-2xl mb-3 bg-slate-900/50 transition-all duration-300 hover:border-cyan-500/50"><div class="flex justify-between items-center mb-3"><h4 class="font-black text-cyan-400 text-base">${plan.name || 'باقة جديدة'}</h4><button onclick="deletePlan('${key}')" class="text-red-500 hover:text-red-400 transition text-sm bg-red-500/10 w-8 h-8 rounded-xl flex items-center justify-center"><i class="fas fa-trash"></i></button></div><div class="grid grid-cols-2 gap-3 mb-4"><div class="bg-black/30 p-2 rounded-xl"><label class="text-[9px] text-slate-500 block text-center mb-1">💰 السعر (ج.م)</label><input type="number" value="${plan.price}" placeholder="السعر" class="input-box text-xs py-2 text-center font-bold text-green-400" onchange="updatePlanField('${key}', 'price', this.value)"></div><div class="bg-black/30 p-2 rounded-xl"><label class="text-[9px] text-slate-500 block text-center mb-1">📦 الجيجات (GB)</label><input type="number" value="${plan.gb}" placeholder="الجيجات" class="input-box text-xs py-2 text-center font-bold text-cyan-400" onchange="updatePlanField('${key}', 'gb', this.value)"></div></div><div class="flex flex-col gap-3 bg-black/20 p-3 rounded-xl"><div class="flex items-center justify-between"><label class="flex items-center gap-2 cursor-pointer group"><input type="checkbox" ${hasGift ? 'checked' : ''} onchange="updatePlanField('${key}', 'hasGift', this.checked)" class="w-4 h-4 rounded border-cyan-500"><span class="text-[11px] font-bold ${hasGift ? 'text-green-500' : 'text-slate-500'} group-hover:text-green-400 transition">🎁 تفعيل الهدية</span></label>${hasGift ? `<div class="flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-xl border border-green-500/30"><span class="text-[9px] text-slate-400">قيمة الهدية:</span><input type="number" value="${plan.giftAmount || 0}" placeholder="جيجات" class="w-20 bg-transparent border-b border-green-500/50 text-center text-green-500 text-xs font-black outline-none" onchange="updatePlanField('${key}', 'giftAmount', this.value)"><span class="text-[9px] text-green-500">GB</span></div>` : '<div></div>'}</div><div class="flex items-center gap-3 pt-1"><label class="flex items-center gap-2 cursor-pointer group"><input type="checkbox" ${isPopular ? 'checked' : ''} onchange="updatePlanField('${key}', 'isPopular', this.checked)" class="w-4 h-4 rounded border-yellow-500"><span class="text-[11px] font-bold ${isPopular ? 'text-yellow-500' : 'text-slate-500'} group-hover:text-yellow-400 transition">🔥 باقة الأكثر طلباً</span></label>${isPopular ? '<div class="text-[8px] bg-yellow-500/20 px-2 py-0.5 rounded-full text-yellow-500">يظهر بشكل مميز للعملاء</div>' : ''}</div></div></div>`; }); } container.innerHTML = html; }); }
-    function updatePlanField(key, field, value) { let val = (field === 'hasGift' || field === 'isPopular') ? Boolean(value) : parseFloat(value); if (field === 'hasGift' || field === 'isPopular' || !isNaN(val)) { database.ref('plans/packages/' + key).update({ [field]: val }).then(() => { if(field === 'hasGift' || field === 'isPopular') loadPlansList(); }); } }
-    function refreshPlansList() { loadPlansList(); alert("✅ تم تحديث قائمة الباقات"); }
-    function addNewPlan() { const planName = prompt("📝 أدخل اسم الباقة الجديدة (مثال: 100 جيجا):"); if (!planName || planName.trim() === "") return; const planPrice = prompt("💰 أدخل سعر الباقة بالجنيه المصري:"); if (!planPrice || isNaN(parseFloat(planPrice))) { alert("❌ السعر غير صحيح!"); return; } const planGB = prompt("📦 أدخل عدد الجيجات (مثال: 100):"); if (!planGB || isNaN(parseFloat(planGB))) { alert("❌ عدد الجيجات غير صحيح!"); return; } const planKey = planName.replace(/\s/g, '_').toLowerCase() + "_" + Date.now(); const newPlan = { name: planName, price: parseFloat(planPrice), gb: parseFloat(planGB), isPopular: false, hasGift: false, giftAmount: 5, createdAt: new Date().toISOString() }; database.ref('plans/packages/' + planKey).set(newPlan).then(() => { alert(`✅ تم إضافة الباقة "${planName}" بنجاح`); refreshPlansList(); }).catch(err => { console.error("خطأ في إضافة الباقة:", err); alert("⚠️ حدث خطأ أثناء إضافة الباقة"); }); }
-    function deletePlan(key) { if(confirm(`⚠️ هل أنت متأكد من حذف هذه الباقة؟ لا يمكن التراجع!`)) { database.ref('plans/packages/' + key).remove().then(() => { alert("✅ تم حذف الباقة بنجاح"); refreshPlansList(); }).catch(err => { console.error("خطأ في حذف الباقة:", err); alert("⚠️ حدث خطأ أثناء حذف الباقة"); }); } }
-
-    // ================== التعديل الأساسي: دالة خريطة الشبكة ==================
-    function loadNetworkMap() { 
-        const container = document.getElementById('networkMapContent'); 
-        if (!container) return; 
-        container.innerHTML = `<div class="text-center py-10"><i class="fas fa-spinner fa-spin"></i></div>`; 
-        
-        // قراءة الأجهزة من المسار network/devices (اللي السكريبت برفعه)
-        database.ref('network/devices').on('value', (snap) => { 
-            const devices = snap.val() || []; 
-            let html = `<div class="network-node network-router text-center mb-4"><i class="fas fa-globe text-2xl text-cyan-400"></i><p class="text-xs font-bold">راوتر السرحان</p></div><div class="grid grid-cols-2 gap-2 max-h-[400px] overflow-y-auto">`; 
-            
-            if (devices.length === 0) {
-                html += `<div class="col-span-2 text-center text-slate-500 p-4">لا توجد أجهزة متصلة حالياً</div>`;
-            } else {
-                devices.forEach(device => { 
-                    html += `<div class="network-node p-2"><p class="text-[10px] font-bold truncate">${device.mac || "?"}</p><p class="text-[8px] text-cyan-400">${device.ip || "?"}</p></div>`; 
-                }); 
+    function openOrderModal(phone) {
+        currentPhone = phone;
+        database.ref('orders/' + phone).once('value', s => {
+            currentOrder = s.val();
+            if (currentOrder) {
+                document.getElementById('modalOrderName').innerText = currentOrder.name;
+                document.getElementById('modalOrderPrice').innerText = (currentOrder.price || 0) + " ج.م";
+                document.getElementById('editMacAddress').value = currentOrder.mac || "";
+                document.getElementById('editSpeedDown').value = currentOrder.speed_limit || 10;
+                document.getElementById('editSpeedUp').value = currentOrder.speed_up || 5;
+                document.getElementById('orderModal').style.display = 'flex';
             }
-            
-            html += `</div>`; 
-            container.innerHTML = html; 
-        }); 
+        });
     }
 
-    function openDrawer() { document.getElementById('sideDrawer').classList.remove('translate-x-full'); document.getElementById('drawerOverlay').classList.remove('hidden'); updateDrawerStats(); loadNetworkMap(); loadTotalProfits(); loadGigaStock(); }
-    function closeDrawer() { document.getElementById('sideDrawer').classList.add('translate-x-full'); document.getElementById('drawerOverlay').classList.add('hidden'); backToMainMenu(); }
-    function showSubPage(page) { document.getElementById('drawerMainContent').classList.add('hidden'); document.getElementById('subPageDevices').classList.add('hidden'); document.getElementById('subPageProfits').classList.add('hidden'); document.getElementById('subPageBroadcast').classList.add('hidden'); document.getElementById('subPageSettings').classList.add('hidden'); document.getElementById('subPagePlans').classList.add('hidden'); if(page === 'devices') { document.getElementById('subPageDevices').classList.remove('hidden'); loadNetworkMap(); } else if(page === 'profits') { document.getElementById('subPageProfits').classList.remove('hidden'); updateDrawerStats(); loadTotalProfits(); loadGigaStock(); } else if(page === 'broadcast') { document.getElementById('subPageBroadcast').classList.remove('hidden'); } else if(page === 'settings') { document.getElementById('subPageSettings').classList.remove('hidden'); } else if(page === 'plans') { document.getElementById('subPagePlans').classList.remove('hidden'); loadPlansList(); } }
-    function backToMainMenu() { document.getElementById('drawerMainContent').classList.remove('hidden'); document.getElementById('subPageDevices').classList.add('hidden'); document.getElementById('subPageProfits').classList.add('hidden'); document.getElementById('subPageBroadcast').classList.add('hidden'); document.getElementById('subPageSettings').classList.add('hidden'); document.getElementById('subPagePlans').classList.add('hidden'); }
-    function sendBroadcast() { const msg = document.getElementById('broadcastMsg').value; if(!msg) { alert("اكتب رسالة أولاً"); return; } database.ref('active_users').once('value', (snap) => { let updates = {}; snap.forEach((child) => { updates[child.key + '/msg'] = msg; }); database.ref('active_users').update(updates).then(() => { alert(`✅ تم إرسال التنبيه لـ ${snap.numChildren()} عميل`); document.getElementById('broadcastMsg').value = ''; backToMainMenu(); }); }); }
-    function exportData() { database.ref('active_users').once('value', (snap) => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(snap.val())], {type: 'application/json'})); a.download = `sarhan_users_${new Date().toISOString().split('T')[0]}.json`; a.click(); }); }
-    function clearAllData() { if(confirm("⚠️ تحذير: هل أنت متأكد من مسح جميع العملاء والطلبات؟ لا يمكن التراجع!")) { database.ref('active_users').remove(); database.ref('orders').remove(); alert("تم مسح جميع البيانات"); updateDrawerStats(); } }
-    function requestNotify() { Notification.requestPermission(); notifAudio.play().then(() => { notifAudio.pause(); notifAudio.currentTime = 0; }); }
-    function playAlert() { notifAudio.play().catch(()=>{}); if(Notification.permission==='granted') new Notification("سرحان NET", {body: "طلب جديد!"}); }
-    function showTab(t) { document.getElementById('usersSection').classList.toggle('hidden', t !== 'users'); document.getElementById('ordersSection').classList.toggle('hidden', t !== 'orders'); document.getElementById('btnUsers').className = t === 'users' ? 'flex-1 py-4 rounded-2xl font-black text-sm tab-active italic transition' : 'flex-1 py-4 rounded-2xl font-black text-sm tab-inactive italic transition'; document.getElementById('btnOrders').className = t === 'orders' ? 'flex-1 py-4 rounded-2xl font-black text-sm tab-active italic transition' : 'flex-1 py-4 rounded-2xl font-black text-sm tab-inactive italic transition'; }
-    function logoutAdmin() { if(confirm("خروج؟")) window.location.reload(); }
-    function deleteUser() { if(confirm("حذف؟")) database.ref('active_users/' + currentName).remove().then(closeModal); }
+    function closeOrderModal() { document.getElementById('orderModal').style.display = 'none'; currentOrder = null; }
 
-    loadTotalProfits();
-    loadGigaStock();
-    setTimeout(() => { firstLoad = false; }, 3000);
+    database.ref('active_users').on('value', s => {
+        let html = '', count = 0;
+        s.forEach(c => { count++; const u = c.val(); html += `<div class="card-user" onclick="alert('تعديل: ${u.name}')"><p class="font-bold">${u.name}</p><p class="text-xs">${u.remainingGB || 0} GB متبقي</p></div>`; });
+        document.getElementById('usersList').innerHTML = html;
+        document.getElementById('totalUsers').innerText = count;
+    });
+
+    database.ref('orders').on('value', s => {
+        let html = '', count = 0;
+        s.forEach(c => { const o = c.val(); if(o.status !== 'approved') { count++; html += `<div class="card-user border-yellow-500/30 bg-yellow-500/5"><div class="flex justify-between"><button onclick="openOrderModal('${c.key}')" class="bg-white text-black px-4 py-2 rounded-xl">تفعيل</button><p class="font-bold">${o.name}</p></div><p class="text-xs">${o.planGB} GB - ${o.price} ج.م</p></div>`; } });
+        document.getElementById('ordersList').innerHTML = html;
+        document.getElementById('totalOrders').innerText = count;
+        const badge = document.getElementById('orderBadge');
+        if(badge) { badge.innerText = count; badge.classList.toggle('hidden', count === 0); }
+        if(!firstLoad && count > 0) new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play();
+        firstLoad = false;
+    });
+
+    function showTab(t) {
+        document.getElementById('usersSection').classList.toggle('hidden', t !== 'users');
+        document.getElementById('ordersSection').classList.toggle('hidden', t !== 'orders');
+        document.getElementById('btnUsers').className = t === 'users' ? 'flex-1 py-3 rounded-2xl font-black tab-active' : 'flex-1 py-3 rounded-2xl font-black tab-inactive';
+        document.getElementById('btnOrders').className = t === 'orders' ? 'flex-1 py-3 rounded-2xl font-black tab-active' : 'flex-1 py-3 rounded-2xl font-black tab-inactive';
+    }
+
+    function logoutAdmin() { if(confirm("خروج؟")) window.location.reload(); }
+    function openDrawer() { alert("لوحة التحكم - قيد التطوير"); }
 </script>
 </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </html>
+</html>
