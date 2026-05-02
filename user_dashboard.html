@@ -2,108 +2,62 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم السرحان NET</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --main-bg: #020617; --card-bg: #0f172a; --cyan-glow: #22d3ee; }
-        body { font-family: 'Cairo', sans-serif; background-color: var(--main-bg); color: white; margin: 0; padding: 15px; min-height: 100vh; }
-        .card-smart { background: var(--card-bg); border-radius: 1.5rem; padding: 20px; border: 1px solid rgba(30, 58, 138, 0.3); margin-bottom: 15px; position: relative; overflow: hidden; }
-        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; margin-top: 10px; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #0891b2, #22d3ee); transition: width 1.5s ease-in-out; }
+        body { font-family: 'Cairo', sans-serif; background: #020617; color: white; padding: 15px; }
+        .card { background: #0f172a; border-radius: 1.5rem; padding: 20px; border: 1px solid #1e3a8a; margin-bottom: 15px; }
+        .progress-bar { height: 8px; background: #1e293b; border-radius: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #0891b2, #22d3ee); transition: width 0.5s; }
         .gift-fill { background: linear-gradient(90deg, #b45309, #fbbf24) !important; }
-        .status-badge { padding: 4px 12px; border-radius: 999px; font-size: 10px; font-weight: 900; border: 1px solid; }
-        .hidden { display: none; }
-        .gift-card { background: linear-gradient(135deg, #1e1b0f, #0f0e0a); border: 2px solid #fbbf24; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(10px); padding: 20px; }
-        .modal-content { background: #0f172a; border: 2px solid #22d3ee; border-radius: 2rem; width: 90%; max-width: 400px; padding: 25px; text-align: center; }
-        .plan-option { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 15px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
-        .plan-option:hover { border-color: #22d3ee; background: #0f172a; transform: scale(1.02); }
-        .plan-option p:first-child { font-size: 16px; font-weight: 900; color: white; margin-bottom: 5px; }
-        .plan-option p:last-child { font-size: 10px; color: #22d3ee; font-weight: bold; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
-
-    <audio id="giftAudio" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
-
     <div class="max-w-md mx-auto">
-        <div class="flex justify-between items-start mb-6 px-2">
-            <div>
-                <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest italic">Sarhan Net System</p>
-                <h1 class="text-xl font-black text-white italic" id="fullName">جاري التحميل..</h1>
-                <p id="deviceDisplay" class="text-[8px] text-slate-600 uppercase mt-1">SECURE CONNECTION</p>
-            </div>
-            <div id="statusLabel" class="status-badge bg-cyan-500/10 text-cyan-400 border-cyan-500/20 italic">فحص الحالة..</div>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-xl font-black italic"><span id="fullName">...</span></h1>
+            <button onclick="logout()" class="bg-red-500/20 px-4 py-2 rounded-xl text-sm"><i class="fas fa-sign-out-alt"></i> خروج</button>
         </div>
 
-        <div id="giftCard" class="hidden gift-card card-smart">
-            <div class="flex justify-between items-center mb-3">
-                <div class="flex items-center gap-3">
-                    <div class="bg-yellow-500 w-10 h-10 rounded-xl flex items-center justify-center"><i class="fas fa-gift text-black text-xl"></i></div>
-                    <div>
-                        <p class="text-[12px] text-yellow-500 font-black">باقة الهدية 🎁</p>
-                        <p class="text-[9px] text-yellow-600/80">Bonus Active</p>
-                    </div>
-                </div>
-            </div>
-            <div class="flex justify-between items-end mb-3">
-                <h2 class="text-4xl font-black italic text-yellow-400" id="giftRem">0.0</h2>
-                <p class="text-[10px] text-slate-500 uppercase">متبقي من <span id="giftTotal">0</span> GB</p>
-            </div>
-            <div class="progress-bar bg-white/10"><div id="giftFill" class="progress-fill gift-fill" style="width: 0%"></div></div>
+        <div id="giftCard" class="card hidden" style="background: linear-gradient(135deg, #1e1b0f, #0f0e0a); border-color: #fbbf24;">
+            <p class="text-yellow-500 text-sm font-bold">🎁 باقة الهدية</p>
+            <h2 id="giftRem" class="text-3xl font-black text-yellow-400">0</h2>
+            <div class="progress-bar mt-2"><div id="giftFill" class="progress-fill gift-fill" style="width:0%"></div></div>
         </div>
 
-        <div class="card-smart">
-            <div class="flex justify-between items-end mb-4">
-                <div>
-                    <p class="text-[11px] text-slate-400 font-bold mb-1 italic">رصيد الباقة الأساسي</p>
-                    <h2 class="text-5xl font-black italic text-white" id="remGiga">0.0</h2>
-                </div>
-                <p class="text-cyan-400 font-black mb-1 text-lg uppercase font-mono">GB</p>
-            </div>
-            <div class="progress-bar"><div id="progressInner" class="progress-fill" style="width: 0%"></div></div>
-            <div class="flex justify-between mt-4 text-[10px]">
-                <span class="text-slate-500 font-bold italic">إجمالي: <span id="totalGB" class="text-slate-300">0 GB</span></span>
-                <span class="text-slate-500 font-bold italic">مستهلك: <span id="usedGB" class="text-slate-300">0 GB</span></span>
+        <div class="card">
+            <p class="text-slate-400 text-sm">الرصيد المتبقي</p>
+            <h2 id="remGiga" class="text-5xl font-black">0</h2>
+            <div class="progress-bar mt-2"><div id="progressInner" class="progress-fill" style="width:0%"></div></div>
+            <div class="flex justify-between mt-3 text-xs">
+                <span>إجمالي: <span id="totalGB">0</span> GB</span>
+                <span>مستهلك: <span id="usedGB">0</span> GB</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-4">
-            <div class="card-smart p-4 text-center">
-                <p class="text-[10px] text-slate-500 mb-1 font-bold uppercase italic">تاريخ الانتهاء</p>
-                <p class="text-base font-black text-cyan-400" id="expiryDate">--/--/----</p>
-            </div>
-            <div class="card-smart p-4 text-center">
-                <p class="text-[10px] text-slate-500 mb-1 font-bold uppercase italic">كود العميل</p>
-                <p class="text-sm font-mono font-black text-white" id="userCode">------</p>
-            </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="card text-center"><p class="text-slate-400 text-xs">تاريخ الانتهاء</p><p id="expiryDate" class="font-bold text-cyan-400">--/--/----</p></div>
+            <div class="card text-center"><p class="text-slate-400 text-xs">كود العميل</p><p id="userCode" class="font-mono font-bold">------</p></div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-4">
-            <button onclick="renewPlan()" class="bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-black py-4 rounded-2xl text-sm shadow-lg flex items-center justify-center gap-2 transition active:scale-95"><i class="fas fa-sync-alt"></i> تجديد</button>
-            <button onclick="openChangePlanModal()" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black py-4 rounded-2xl text-sm shadow-lg flex items-center justify-center gap-2 transition active:scale-95"><i class="fas fa-exchange-alt"></i> تغيير باقة</button>
+        <div class="grid grid-cols-2 gap-3 mt-3">
+            <button onclick="renewPlan()" class="bg-cyan-600 py-3 rounded-xl font-bold">تجديد</button>
+            <button onclick="window.location.href='index.html'" class="bg-purple-600 py-3 rounded-xl font-bold">تغيير باقة</button>
         </div>
 
-        <div id="adminMsgBox" class="hidden card-smart bg-blue-600/5 border-blue-500/20 border-dashed">
-            <p class="text-[9px] text-blue-400 font-black italic mb-1 uppercase">رسالة من الإدارة</p>
-            <p class="text-xs text-slate-200 font-bold italic" id="adminMsgText">..</p>
-        </div>
-
-        <button onclick="logout()" class="w-full py-5 text-slate-700 text-[9px] font-black uppercase tracking-[3px] mt-4 transition hover:text-red-500 active:scale-95"><i class="fas fa-power-off ml-2"></i> تسجيل خروج</button>
-    </div>
-
-    <div id="changePlanModal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-black text-white">اختر باقة جديدة</h3>
-                <button onclick="closeModal()" class="text-slate-500 text-2xl hover:text-white transition">&times;</button>
-            </div>
-            <div id="plansListContainer" class="space-y-3 max-h-96 overflow-y-auto"></div>
+        <div id="adminMsgBox" class="card hidden bg-blue-600/10 border-blue-500">
+            <p class="text-blue-400 text-xs">📢 رسالة من الإدارة</p>
+            <p id="adminMsgText" class="text-sm"></p>
         </div>
     </div>
+
+    <form id="logoutForm" method="POST" style="display:none;">
+        <input type="hidden" name="magic" id="logoutMagic">
+        <input type="hidden" name="logout" value="1">
+    </form>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -111,185 +65,68 @@
 
     <script>
         let phone = "";
-        let rawPhone = localStorage.getItem('temp_phone');
+        const rawPhone = localStorage.getItem('temp_phone');
         
         if (rawPhone) {
-            if (typeof formatPhoneNumber === 'function') {
-                phone = formatPhoneNumber(rawPhone);
-            } else {
-                phone = rawPhone.replace(/\D/g, '');
-                if (phone.startsWith('0')) phone = phone.substring(1);
-                if (phone.startsWith('20')) phone = phone.substring(2);
-                phone = '20' + phone;
-            }
+            phone = formatPhoneNumber(rawPhone);
         } else {
             window.location.href = 'index.html';
-        }
-
-        let lastGiftTotal = 0;
-
-        function formatDateFromFirebase(dateValue) {
-            if (!dateValue) return "غير محدد";
-            if (typeof dateValue === 'string' && dateValue.includes('/')) {
-                return dateValue;
-            }
-            try {
-                const date = new Date(dateValue);
-                if (!isNaN(date.getTime())) {
-                    const day = date.getDate().toString().padStart(2, '0');
-                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    return `${day}/${month}/${year}`;
-                }
-            } catch(e) {}
-            return "غير محدد";
         }
 
         database.ref('active_users/' + phone).on('value', (snap) => {
             const data = snap.val();
             if (data) {
-                document.getElementById('fullName').innerText = data.name || 'عميل السرحان';
+                document.getElementById('fullName').innerText = data.name || 'عميل';
                 document.getElementById('userCode').innerText = data.code || 'N/A';
-                if(data.mac) document.getElementById('deviceDisplay').innerHTML = `MAC: ${data.mac}`;
-
-                const remaining = parseFloat(data.remainingGB) || 0;
-                const total = parseFloat(data.totalGB) || 0;
-                const used = parseFloat(data.usedGB) || 0;
+                
+                const remaining = data.remainingGB || 0;
+                const total = data.totalGB || 0;
+                const used = data.usedGB || 0;
                 
                 document.getElementById('remGiga').innerText = remaining.toFixed(2);
-                document.getElementById('totalGB').innerText = total.toFixed(1) + " GB";
-                document.getElementById('usedGB').innerText = used.toFixed(1) + " GB";
+                document.getElementById('totalGB').innerText = total;
+                document.getElementById('usedGB').innerText = used;
                 
                 const percent = total > 0 ? (remaining / total) * 100 : 0;
-                document.getElementById('progressInner').style.width = Math.min(100, Math.max(0, percent)) + "%";
-
-                const expiryDate = formatDateFromFirebase(data.endDate);
-                document.getElementById('expiryDate').innerText = expiryDate;
-
-                const gTotal = parseFloat(data.giftTotal) || 0;
-                const gUsed = parseFloat(data.giftUsed) || 0;
-                const gRem = (gTotal - gUsed).toFixed(1);
+                document.getElementById('progressInner').style.width = percent + "%";
+                document.getElementById('expiryDate').innerText = data.endDate || 'غير محدد';
+                
+                const gTotal = data.giftTotal || 0;
+                const gUsed = data.giftUsed || 0;
+                const gRem = gTotal - gUsed;
                 
                 if (gTotal > 0 && gRem > 0) {
                     document.getElementById('giftCard').classList.remove('hidden');
-                    document.getElementById('giftRem').innerText = gRem;
-                    document.getElementById('giftTotal').innerText = gTotal.toFixed(1);
-                    const gPercent = ((gTotal - gUsed) / gTotal) * 100;
-                    document.getElementById('giftFill').style.width = Math.min(100, Math.max(0, gPercent)) + "%";
-                    
-                    if(gTotal > lastGiftTotal) {
-                        const giftAudio = document.getElementById('giftAudio');
-                        if(giftAudio) giftAudio.play().catch(e => console.log("الصوت يحتاج تفاعل"));
-                    }
-                } else {
-                    document.getElementById('giftCard').classList.add('hidden');
-                }
-                lastGiftTotal = gTotal;
-
-                if(data.msg) {
-                    document.getElementById('adminMsgBox').classList.remove('hidden');
-                    document.getElementById('adminMsgText').innerText = data.msg;
-                } else {
-                    document.getElementById('adminMsgBox').classList.add('hidden');
+                    document.getElementById('giftRem').innerText = gRem.toFixed(1);
+                    const gPercent = (gRem / gTotal) * 100;
+                    document.getElementById('giftFill').style.width = gPercent + "%";
                 }
                 
-                const statusLabel = document.getElementById('statusLabel');
-                if(remaining <= 0) {
-                    statusLabel.innerText = "⚠️ منتهي";
-                    statusLabel.className = "status-badge bg-red-500/10 text-red-500 border-red-500/20";
-                } else if(data.status === 'blocked') {
-                    statusLabel.innerText = "🚫 محظور";
-                    statusLabel.className = "status-badge bg-red-500/10 text-red-500 border-red-500/20";
-                } else {
-                    statusLabel.innerText = "✅ متصل";
-                    statusLabel.className = "status-badge bg-cyan-500/10 text-cyan-400 border-cyan-500/20";
+                if (data.msg) {
+                    document.getElementById('adminMsgBox').classList.remove('hidden');
+                    document.getElementById('adminMsgText').innerText = data.msg;
                 }
-            } else {
-                document.getElementById('fullName').innerText = "رقم غير مسجل!";
-                setTimeout(() => {
-                    if(confirm("لا يوجد اشتراك نشط لهذا الرقم. هل تريد الاشتراك الآن؟")) {
-                        window.location.href = 'index.html';
-                    }
-                }, 1000);
             }
         });
 
         function renewPlan() {
             database.ref('active_users/' + phone).once('value', s => {
                 const u = s.val();
-                if(u) {
-                    window.location.href = `pay.html?price=${u.totalGB || 100}&gb=${u.totalGB || 100}&name=${encodeURIComponent(u.name || 'باقتي')}`;
-                } else {
-                    alert("حدث خطأ في تحميل بياناتك");
-                }
+                if (u && u.magic) saveFortiGateData(u.magic);
+                window.location.href = `pay.html?price=${u.totalGB}&gb=${u.totalGB}&name=${encodeURIComponent(u.name)}`;
             });
         }
 
-        function loadPlansSorted() {
-            const container = document.getElementById('plansListContainer');
-            if (!container) return;
-            
-            container.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin text-cyan-400"></i><p class="text-xs text-slate-500 mt-2">جاري تحميل الباقات...</p></div>';
-            
-            database.ref('plans/packages').once('value', (snap) => {
-                const plans = snap.val();
-                if (!plans) {
-                    container.innerHTML = '<p class="text-center text-slate-400 py-4">لا توجد باقات متاحة</p>';
-                    return;
-                }
-                
-                const plansArray = [];
-                snap.forEach(child => {
-                    const p = child.val();
-                    plansArray.push({
-                        key: child.key,
-                        name: p.name,
-                        gb: parseFloat(p.gb) || 0,
-                        price: parseFloat(p.price) || 0
-                    });
-                });
-                
-                plansArray.sort((a, b) => a.gb - b.gb);
-                
-                let html = '';
-                plansArray.forEach(plan => {
-                    html += `
-                        <div class="plan-option" onclick="selectPlan('${plan.gb}', '${plan.price}', '${plan.name.replace(/'/g, "\\'")}')">
-                            <p class="font-black text-white">${plan.name}</p>
-                            <p class="text-[10px] text-cyan-400 font-bold italic uppercase">${plan.gb} GB — ${plan.price} جنيه</p>
-                        </div>`;
-                });
-                
-                container.innerHTML = html;
-            }).catch(err => {
-                console.error("خطأ في تحميل الباقات:", err);
-                container.innerHTML = '<p class="text-center text-red-400 py-4">حدث خطأ في تحميل الباقات</p>';
-            });
-        }
-
-        function openChangePlanModal() {
-            document.getElementById('changePlanModal').style.display = 'flex';
-            loadPlansSorted();
-        }
-
-        function selectPlan(gb, price, name) {
-            window.location.href = `pay.html?price=${price}&gb=${gb}&name=${encodeURIComponent(name)}`;
-        }
-
-        function closeModal() { 
-            document.getElementById('changePlanModal').style.display = 'none'; 
-        }
-        
-        function logout() { 
-            localStorage.clear(); 
-            window.location.href = 'index.html'; 
-        }
-        
-        window.onclick = function(event) {
-            const modal = document.getElementById('changePlanModal');
-            if (event.target === modal) {
-                closeModal();
+        function logout() {
+            const { magic } = getFortiGateData();
+            if (magic) {
+                document.getElementById('logoutMagic').value = magic;
+                document.getElementById('logoutForm').action = DEFAULT_LOGOUT_URL;
+                document.getElementById('logoutForm').submit();
             }
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = 'index.html';
         }
     </script>
 </body>
